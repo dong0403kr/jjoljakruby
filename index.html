@@ -80,6 +80,15 @@
       background-color: #45a049;
     }
 
+    .resetbutton {
+      background-color: #ccc; 
+      color: #333;
+    }
+    
+    .resetbutton:hover {
+      background-color: #b4b4b4; 
+    }
+
     .checkbox-row {
       display: flex;
       flex-wrap: nowrap;
@@ -171,6 +180,7 @@
   min-width: 80px;
   width: auto;
   flex-shrink: 0;
+  margin-top: 10px;
 }
 
 
@@ -190,6 +200,14 @@
     .checkbox-label {
       cursor: pointer;
     }
+
+    .button-column {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 10px;
+  align-items: flex-start; /* 왼쪽 정렬 (원하면 center로 변경 가능) */
+}
 
     @media (max-width: 480px) {
       label {
@@ -221,9 +239,12 @@
 <body>
 
   <div class="title-wrapper">
-  <h1>세나리 쫄작 루비 계산기</h1>
-  <button id="showAssumption" class="assumption-button">전제조건</button>
-</div>
+    <h1>세나리 쫄작 루비 계산기</h1>
+    <div class="button-column">
+      <button id="showAssumption" class="assumption-button">전제조건</button>
+      <button id="showIncludedItems" class="assumption-button">계산 포함 항목</button>
+    </div>
+  </div>
 
   <div id="assumptionOverlay" class="overlay">
     <div class="assumption-box">
@@ -248,6 +269,29 @@
       </ul><div class="credit">Made by 무과금전향</div>
     </div>
   </div>
+
+  <div id="includedItemsOverlay" class="overlay">
+  <div class="assumption-box">
+    <span class="close-btn" onclick="closeIncludedItems()">&times;</span>
+    <h3>🗝️ 계산에 기본 포함된 열쇠</h3>
+    <ul>
+      <li>자동 충전 열쇠(1일) : 480개(기본) / 720개(월정액)</li>
+      <li>세나패스 열쇠(28일 중 12일) : 480개(일반) / 1080개(프리미엄)</li>
+      <li>일일의뢰 + 길드출석(1일) : 120개</li>
+      <li>300일 출석표(10일) : 240개. 1일에 24개로 계산</li>
+      <li>주말 푸시보상(1주) : 200개</li>
+      <li>상점 무료 열쇠상자(1일) : 60개</li>
+    </ul>
+    <h3>♦️ 계산에 기본 포함된 루비</h3>
+    <ul>
+      <li>세나패스 루비(28일 중 12일) : 500개(일반) / 2900개(프리미엄)</li>
+      <li>일일의뢰 + 상점 무료루비(1일) : 130개</li>
+      <li>300일 출석표(10일) : 200개. 1일에 20개로 계산</li>
+      <li>주말 부스트 보상(1주) : 100개</li>
+    </ul>
+    <div class="credit">Made by 무과금전향</div>
+  </div>
+</div>
 
   <div class="section" style="display: flex; gap: 20px;">
     <h3>월정액 여부</h3>
@@ -290,7 +334,12 @@
   </div>
 
   <div class="section">
-    <h3>하루 레이드 판 수</h3>
+    <div style="display: flex; align-items: center; gap: 10px;">
+      <h3>하루 레이드 판 수</h3>
+      <span id="raidWarning" style="color: red; font-size: 14px; display: none;">
+        레이드 판 수가 너무 많습니다.
+      </span>
+    </div>
     <label for="raidCount">
       레이드 판 수:
       <input type="number" id="raidCount" min="0" placeholder="예: 10">
@@ -319,6 +368,7 @@
 
   <div class="section">
     <button onclick="calculateProfit()">💰 루비 순이익 계산하기</button>
+    <button onclick="resetForm()" class="resetbutton">🔄 초기화</button>
     <h3>📆 2주간 루비 순이익: <span id="profit2w">0</span> 루비</h3>
     <h3>📆 4주간 루비 순이익: <span id="profit4w">0</span> 루비</h3>
     <h3>📈 하루 평균 루비 순이익: <span id="avgProfit">0</span> 루비</h3>
@@ -326,6 +376,35 @@
     <h3>📊 하루 평균 사용되는 쫄 수: <span id="avgHeroCount">0</span> 마리</h4>
   </div>
 <script>
+
+  function resetForm() {
+  
+    //경고문 초기화
+  document.getElementById("raidWarning").style.display = "none";
+    
+  // 체크박스 초기화
+  document.getElementById("rubySubscription").checked = false;
+  document.getElementById("keySubscription").checked = false;
+  document.getElementById("senaPass").checked = false;
+  document.getElementById("includeExpeditionKey").checked = true;
+
+  // 셀렉트 초기화
+  document.getElementById("keyBoxRuby").value = "0";
+  document.getElementById("conquestTier").value = "none";
+
+  // 숫자 입력 초기화
+  document.getElementById("honorKeyCount").value = "";
+  document.getElementById("guildKeyCount").value = "";
+  document.getElementById("raidCount").value = "";
+
+  // 결과창 초기화
+  document.getElementById("profit2w").innerText = "0";
+  document.getElementById("profit4w").innerText = "0";
+  document.getElementById("avgProfit").innerText = "0";
+  document.getElementById("heroCount").innerText = "0";
+  document.getElementById("avgHeroCount").innerText = "0";
+}
+
 function calculateProfit() {
   const rubySub = document.getElementById("rubySubscription").checked;
   const keySub = document.getElementById("keySubscription").checked;
@@ -365,8 +444,9 @@ function calculateProfit() {
   const keySubKeys = keySub ? (period === 2 ? 1120 : 2240) : 0;
   const keysFromSenaPass = senaPass ? 1080 : 480; // 구매 후 2주안에 끝낸다는 가정 하에(period === 2 ? 540 : 1080) : (period === 2 ? 240 : 480);
   const keysFromDailySources = (60 + 60) * days; // 일일의뢰 + 길드출석
-  const keysFrom300Attendance = period === 2 ? 240 : 480; // 300일 출석표
+  const keysFrom300Attendance = 24 * days; // 300일 출석표 열쇠. 10일에 240개 이므로 하루에 24개로 계산
   const keysFromShop = (honorCount + guildCount) * 60 * weeks; // 명예 & 길드 상점
+  const keysFromWeekend = 200 * weeks; // 주말 푸시 열쇠 (토,일 100개씩)
   const keysFromKeyBox = ((1 + 
     (keyBoxRuby >= 50 ? 20 : 0) +
     (keyBoxRuby >= 80 ? 50 : 0) +
@@ -374,11 +454,22 @@ function calculateProfit() {
     (keyBoxRuby >= 120 ? 50 : 0)) * 60) * days;
 
   const totalKeysBeforeRaid = totalNaturalKeys + keySubKeys + keysFromSenaPass +
-    keysFromDailySources + keysFrom300Attendance + keysFromShop + keysFromKeyBox;
+    keysFromDailySources + keysFrom300Attendance + keysFromShop + keysFromWeekend + keysFromKeyBox;
 
   // 🔹 레이드 차감
   const raidKeysUsed = raidCountPerDay * 6 * days; // 레이드에 사용되는 열쇠 수
   const keysForCholjak = totalKeysBeforeRaid - raidKeysUsed; // 레이드 열쇠 차감 후 쫄작용 열쇠
+  // 레이드 열쇠 소모량이 총 열쇠보다 많을 경우 → 경고 출력
+  const raidWarning = document.getElementById("raidWarning");
+    if (keysForCholjak < 0) {
+      raidWarning.style.display = "inline";
+      // return {
+      //   netProfit: 0,
+      //   heroCount: 0
+      // }; // 계산 중단
+    } else {
+      raidWarning.style.display = "none";
+    }
 
   // 🔹 정확한 쫄작원정대 루프 계산 방식 적용
   const externalRuns = keysForCholjak / 6; // 쫄작원정대 열쇠 이외 열쇠로 쫄작돌리는 횟수
@@ -394,21 +485,22 @@ function calculateProfit() {
 
   // 🔹 쫄작 루비 수익
   const keysPerRun = rubySub ? 60 : 66;
-  const runs = Math.floor(totalCholjakKeys / keysPerRun);
+  const runs = totalCholjakKeys / keysPerRun;
   const heroCount = runs * 4;
   const rubyFromCholjak = runs * 80;
 
   // 🔹 기타 루비 수급
   const rubyFromRubySub = rubySub ? (days * 200 + (period === 2 ? 165 : 330)) : 0;
   const rubyFromKeySubBonus = keySub ? (period === 2 ? 100 : 200) : 0;
-  const rubyFromSenaPass = senaPass ? (period === 2 ? 1450 : 2900) : (period === 2 ? 250 : 500);
+  const rubyFromSenaPass = senaPass ? 2900 : 500; // (period === 2 ? 1450 : 2900) : (period === 2 ? 250 : 500);
   const rubyFromDailyQuest = 100 * days;
+  const rubyFrom300Attendance = 20 * days; // 300일 출석표 루비. 10일에 200개 이므로 하루에 20개로 계산
   const rubyFromFreeShop = 30 * days;
   const rubyFromWeekend = 100 * weeks;
   const rubyFromConquest = getConquestRuby(conquestTier, weeks);
 
   const totalRubyIncome = rubyFromCholjak + rubyFromRubySub + rubyFromKeySubBonus +
-    rubyFromSenaPass + rubyFromDailyQuest + rubyFromFreeShop + rubyFromWeekend + rubyFromConquest;
+    rubyFromSenaPass + rubyFromDailyQuest + rubyFrom300Attendance + rubyFromFreeShop + rubyFromWeekend + rubyFromConquest;
 
   // 🔹 루비 지출
   const rubySpentPerDay = getKeyBoxRubyCostPerDay(keyBoxRuby);
@@ -423,23 +515,35 @@ function calculateProfit() {
   console.log("일일의뢰 & 길드출석:", keysFromDailySources);
   console.log("300일 출석표 열쇠:", keysFrom300Attendance);
   console.log("상점 열쇠:", keysFromShop);
-  console.log("상점 열쇠 상자:", keysFromKeyBox);
-console.log("쫄작에 쓸 열쇠:", keysForCholjak);
-console.log("일일 쫄작 총 루비:", rubyFromCholjak/days-rubySpentPerDay);
-  return {
-    netProfit,
-    heroCount
-  };
+  console.log("쫄작 열쇠:", keysForCholjak);
+console.log("쫄작 횟수:", runs);
+console.log("2주 동안 사용되는 쫄:", heroCount);
+
+  if(keysForCholjak<0){
+    return {
+      netProfit,
+      heroCount:0
+    };
+  } else{
+      return {
+        netProfit,
+        heroCount
+      };
+    }
 }
 
-  const result2w = compute(2);
   const result4w = compute(4);
+  const result2w = compute(2);
 
   document.getElementById("profit2w").innerText = Math.floor(result2w.netProfit).toLocaleString();
   document.getElementById("profit4w").innerText = Math.floor(result4w.netProfit).toLocaleString();
   document.getElementById("avgProfit").innerText = Math.floor(result2w.netProfit / 14).toLocaleString();
   document.getElementById("heroCount").innerText = Math.floor(result2w.heroCount).toLocaleString();
-  document.getElementById("avgHeroCount").innerText = Math.floor(result2w.heroCount / 14).toLocaleString();
+  const avgHero = result2w.heroCount / 14;
+  document.getElementById("avgHeroCount").innerText =
+    (avgHero % 1 < 0.05 || avgHero % 1 > 0.95)
+      ? Math.round(avgHero).toString()
+      : avgHero.toFixed(1);
 }
 
 // 전제조건 안내 토글
@@ -461,6 +565,38 @@ overlay.addEventListener("click", (e) => {
     overlay.classList.remove("show");
   }
 });
+
+const includedItemsOverlay = document.getElementById("includedItemsOverlay");
+  const showIncludedItemsBtn = document.getElementById("showIncludedItems");
+
+  showIncludedItemsBtn.addEventListener("click", () => {
+    includedItemsOverlay.classList.add("show");
+  });
+
+  function closeIncludedItems() {
+    includedItemsOverlay.classList.remove("show");
+  }
+
+  includedItemsOverlay.addEventListener("click", (e) => {
+    if (e.target === includedItemsOverlay) {
+      includedItemsOverlay.classList.remove("show");
+    }
+  });
+
+  // 숫자 입력이 8 이상이면 자동으로 7로 변경
+function enforceMaxValue(id, max) {
+  const input = document.getElementById(id);
+  input.addEventListener('input', () => {
+    let val = parseInt(input.value);
+    if (val > max) {
+      input.value = max;
+    }
+  });
+}
+
+// 적용 대상 input 요소 등록
+enforceMaxValue("honorKeyCount", 7);
+enforceMaxValue("guildKeyCount", 7);
 </script>
 </body>
 </html>
