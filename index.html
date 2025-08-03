@@ -163,7 +163,7 @@
 }
 
 .title-wrapper h1 {
-  font-size: clamp(20px, 4vw, 34px); /* 화면 크기에 따라 자동 조절 */
+  font-size: clamp(30px, 5vw, 34px); /* 화면 크기에 따라 자동 조절 */
   margin-bottom: 10px;
   flex-shrink: 1;
   text-overflow: ellipsis;
@@ -209,6 +209,10 @@
   align-items: flex-start; /* 왼쪽 정렬 (원하면 center로 변경 가능) */
 }
 
+.mobile-break {
+  display: none;
+}
+
     @media (max-width: 480px) {
       label {
         flex-direction: nowrap;
@@ -228,18 +232,22 @@
 
       .title-wrapper {
         padding: 15px 20px;
+        margin-left: 5%;
       }
       .checkbox-row {
         flex-direction: nowrap; /* 세로 배열로 전환 */
         gap: 10px;
       }
+      .mobile-break {
+    display: inline;
+  }
     }
   </style>
 </head>
 <body>
 
   <div class="title-wrapper">
-    <h1>세나리 쫄작 루비 계산기</h1>
+    <h1>세나리 쫄작 <span class="mobile-break"><br></span>루비 계산기</h1>
     <div class="button-column">
       <button id="showAssumption" class="assumption-button">전제조건</button>
       <button id="showIncludedItems" class="assumption-button">계산 포함 항목</button>
