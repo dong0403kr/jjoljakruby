@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>세나리 루비 쫄작 계산기</title>
+  <title>세나리 쫄작 루비 계산기</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -67,6 +67,96 @@
       flex-direction: row;
     }
 
+    .overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.4);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  animation: fadeOut 0.3s ease forwards;
+  z-index: 1000;
+}
+
+.overlay.show {
+  display: flex;
+  animation: fadeIn 0.3s ease forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+
+.assumption-box {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  position: relative;
+  animation: fadeIn 0.3s ease forwards;
+}
+
+.assumption-box h3 {
+  margin-top: 0;
+}
+
+.assumption-box ul {
+  padding-left: 20px;
+}
+
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.title-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: nowrap;
+  gap: 10px;
+  padding: 15px 30px;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.title-wrapper h1 {
+  font-size: clamp(18px, 5vw, 28px); /* 화면 크기에 따라 자동 조절 */
+  margin: 0;
+  flex-shrink: 1;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.assumption-button {
+  background-color: #777;
+  font-size: 14px;
+  padding: 5px 10px;
+  white-space: nowrap;
+  max-width: 120px;
+  min-width: 80px;
+  width: auto;
+  flex-shrink: 0;
+}
+
+.assumption-button:hover {
+      background-color: #e06040;
+    }
+
     @media (max-width: 480px) {
       label {
         flex-direction: nowrap;
@@ -93,7 +183,33 @@
 </head>
 <body>
 
-  <h1>세나리 루비 쫄작 계산기</h1>
+  <div class="title-wrapper">
+  <h1>세나리 쫄작 루비 계산기</h1>
+  <button id="showAssumption" class="assumption-button">전제조건</button>
+</div>
+
+  <div id="assumptionOverlay" class="overlay">
+    <div class="assumption-box">
+      <span class="close-btn">&times;</span>
+      <h3>📌 계산 전제조건</h3>
+      <ul>
+        <li>쫄작은 모험 일반 14영지 이상, 전복률 0% 기준</li>
+        <li>열쇠를 최대 보유개수 이상 방치하지 않고 계속 사용</li>
+        <li>일일 의뢰, 세나패스 등 일일 퀘스트는 모두 진행</li>
+        <li>길드 출석 보상 열쇠 60개</li>
+        <li>상점 무료상품 모두 구매</li>
+      </ul>
+      <h3>📌 유의사항</h3>
+      <ul>
+        <li>쫄작원정대 열쇠는 쫄작원정대Ⅱ 20번째 사이클 기준</li>
+        <li>총력전 루비 보상은 2주에 한번씩 받는 걸로 계산</li>
+        <li>세나패스는 현재 4주에 한번씩 초기화되는 상황, 초기화 이후 12일이면 모든 보상을 받을 수 있으므로, 
+          2주와 4주 순이익에 세나패스가 미치는 영향이 서로 같도록 처리함. 한 번의 세나패스로 받을 수 있는 모든 보상으로 계산 (4주 동안 세나패스를 2번 걸쳐 진행하는 경우는 고려하지 않음)
+        </li>
+        <li>잡화상점, 총력전 출석, 이벤트 보상 등의 다른 변수는 계산에 포함하지 않았으므로 계산 전제조건을 만족한다면 실제 모을 수 있는 루비는 계산결과 보다 많음</li>
+      </ul>
+    </div>
+  </div>
 
   <div class="section" style="display: flex; gap: 20px;">
     <h3>월정액 여부</h3>
@@ -123,7 +239,7 @@
   </div>
 
   <div class="section">
-    <h4>상점에서 구매할 열쇠 개수</h4>
+    <h4>일주일 동안 상점에서 구매할 열쇠 개수</h4>
     <label for="honorKeyCount">
       명예상점 구매 횟수:
       <input type="number" id="honorKeyCount" min="0" max="7" placeholder="예: 3">
@@ -136,9 +252,9 @@
   </div>
 
   <div class="section">
-    <h3>하루 레이드 플레이 횟수</h3>
+    <h3>하루 레이드 판 수</h3>
     <label for="raidCount">
-      레이드 횟수:
+      레이드 판 수:
       <input type="number" id="raidCount" min="0" placeholder="예: 10">
     </label>
   </div>
@@ -209,7 +325,7 @@ function calculateProfit() {
   const naturalKeyPerDay = keySub ? 720 : 480;
   const totalNaturalKeys = naturalKeyPerDay * days;
   const keySubKeys = keySub ? (period === 2 ? 1120 : 2240) : 0;
-  const keysFromSenaPass = senaPass ? (period === 2 ? 540 : 1080) : (period === 2 ? 240 : 480);
+  const keysFromSenaPass = senaPass ? 1080 : 480; // 구매 후 2주안에 끝낸다는 가정 하에(period === 2 ? 540 : 1080) : (period === 2 ? 240 : 480);
   const keysFromDailySources = (60 + 60) * days; // 일일의뢰 + 길드출석
   const keysFrom300Attendance = period === 2 ? 240 : 480; // 300일 출석표
   const keysFromShop = (honorCount + guildCount) * 60 * weeks; // 명예 & 길드 상점
@@ -288,7 +404,25 @@ console.log("쫄작 총 루비:", rubyFromCholjak);
   document.getElementById("avgHeroCount").innerText = Math.floor(result2w.heroCount / 14).toLocaleString();
 }
 
-    
+// 전제조건 안내 토글
+const overlay = document.getElementById("assumptionOverlay");
+const openBtn = document.getElementById("showAssumption");
+const closeBtn = overlay.querySelector(".close-btn");
+
+openBtn.addEventListener("click", () => {
+  overlay.classList.add("show");
+});
+
+closeBtn.addEventListener("click", () => {
+  overlay.classList.remove("show");
+});
+
+// 바깥 영역 클릭 시 닫기
+overlay.addEventListener("click", (e) => {
+  if (e.target === overlay) {
+    overlay.classList.remove("show");
+  }
+});
 </script>
 </body>
 </html>
