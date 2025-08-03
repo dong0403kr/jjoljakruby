@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>세나리 루비 쫄작 계산기</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    label, h3, h4, h1, select, input[type="checkbox"] {
+      -webkit-user-select: none; /* Safari */
+      -moz-user-select: none;    /* Firefox */
+      -ms-user-select: none;     /* IE/Edge */
+      user-select: none;         /* 표준 */
+    }
+
+    h1, h3, h4 {
+      color: #333;
+    }
+
+    .section {
+      margin-bottom: 10px;
+    }
+
+    label {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: 8px 0;
+    }
+
+    input[type="number"],
+    select {
+      flex: 1;
+      padding: 6px;
+      margin-left: 10px;
+    }
+
+    input[type="checkbox"] {
+      margin-right: 10px;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      margin-top: 10px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+
+    .checkbox-row {
+      display: flex;
+      flex-wrap: nowrap;
+      gap: 20px;
+      flex-direction: row;
+    }
+
+    @media (max-width: 480px) {
+      label {
+        flex-direction: nowrap;
+        align-items: middle;
+      }
+
+      input[type="number"],
+      select {
+        margin-left: 0;
+        width: 100%;
+        margin-top: 5px;
+      }
+
+      button {
+        width: 100%;
+      }
+
+      .checkbox-row {
+        flex-direction: nowrap; /* 세로 배열로 전환 */
+        gap: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>세나리 루비 쫄작 계산기</h1>
+
+  <div class="section" style="display: flex; gap: 20px;">
+    <h3>월정액 여부</h3>
+    <div class="checkbox-row">
+        <label><input type="checkbox" id="rubySubscription"> 루비 월정액</label>
+        <label><input type="checkbox" id="keySubscription"> 열쇠 월정액</label>
+    </div>
+  </div>
+
+  <div class="section" style="display: flex; gap: 20px;">
+    <h3>세나패스</h3>
+    <label><input type="checkbox" id="senaPass"> 세나패스 구매함</label>
+  </div>
+
+  <div class="section" style="display: flex; gap: 20px;">
+    <h3>열쇠상자 구매</h3>
+    <label for="keyBoxRuby">
+      사용할 루비:
+      <select id="keyBoxRuby">
+        <option value="0">구매 안함</option>
+        <option value="50">50루비단</option>
+        <option value="80">80루비단</option>
+        <option value="100">100루비단</option>
+        <option value="120">120루비단</option>
+      </select>
+    </label>
+  </div>
+
+  <div class="section">
+    <h4>상점에서 구매할 열쇠 개수</h4>
+    <label for="honorKeyCount">
+      명예상점 구매 횟수:
+      <input type="number" id="honorKeyCount" min="0" max="7" placeholder="예: 3">
+    </label>
+
+    <label for="guildKeyCount">
+      길드상점 구매 횟수:
+      <input type="number" id="guildKeyCount" min="0" max="7" placeholder="예: 2">
+    </label>
+  </div>
+
+  <div class="section">
+    <h3>하루 레이드 플레이 횟수</h3>
+    <label for="raidCount">
+      레이드 횟수:
+      <input type="number" id="raidCount" min="0" placeholder="예: 10">
+    </label>
+  </div>
+
+  <div class="section">
+    <h3>총력전 티어</h3>
+    <label for="conquestTier">
+      티어 선택:
+      <select id="conquestTier">
+        <option value="none">선택 안함</option>
+        <option value="common">일반</option>
+        <option value="advanced">고급</option>
+        <option value="rare">희귀</option>
+        <option value="legend">전설</option>
+      </select>
+    </label>
+  </div>
+
+  <!-- ✅ 쫄작원정대 열쇠 포함 여부 -->
+<div class="section" style="display: flex; gap: 20px;">
+  <h3>쫄작원정대 열쇠 포함</h3>
+  <label><input type="checkbox" id="includeExpeditionKey" checked> 포함하여 계산</label>
+</div>
+
+  <div class="section">
+    <button onclick="calculateProfit()">💰 루비 순이익 계산하기</button>
+    <h3>📆 2주간 루비 순이익: <span id="profit2w">0</span> 루비</h3>
+    <h3>📆 4주간 루비 순이익: <span id="profit4w">0</span> 루비</h3>
+    <h3>📈 하루 평균 루비 순이익: <span id="avgProfit">0</span> 루비</h3>
+    <h4>👥 2주 동안 필요한 쫄 수: <span id="heroCount">0</span> 마리</h4>
+    <h4>📊 하루 평균 필요한 쫄 수: <span id="avgHeroCount">0</span> 마리</h4>
+  </div>
+<script>
+function calculateProfit() {
+  const rubySub = document.getElementById("rubySubscription").checked;
+  const keySub = document.getElementById("keySubscription").checked;
+  const senaPass = document.getElementById("senaPass").checked;
+  const honorCount = parseInt(document.getElementById("honorKeyCount").value) || 0;
+  const guildCount = parseInt(document.getElementById("guildKeyCount").value) || 0;
+  const keyBoxRuby = parseInt(document.getElementById("keyBoxRuby").value) || 0;
+  const raidCountPerDay = parseInt(document.getElementById("raidCount").value) || 0;
+  const conquestTier = document.getElementById("conquestTier").value;
+  const includeExpeditionKey = document.getElementById("includeExpeditionKey").checked;
+
+  function getKeyBoxRubyCostPerDay(rubyTier) {
+    let cost = 0;
+    if (rubyTier >= 50) cost += 50 * 20;
+    if (rubyTier >= 80) cost += 80 * 50;
+    if (rubyTier >= 100) cost += 100 * 50;
+    if (rubyTier >= 120) cost += 120 * 50;
+    return cost;
+  }
+
+  function getConquestRuby(tier, weeks) {
+    if (weeks < 2) return 0;
+    if (tier === "legend") return 6400 * (weeks / 2);
+    if (tier === "rare") return 3400 * (weeks / 2);
+    if (tier === "advanced") return 1400 * (weeks / 2);
+    if (tier === "common") return 200 * (weeks / 2);
+    return 0;
+  }
+
+ function compute(period) {
+  const days = period * 7;
+  const weeks = period;
+
+  // 🔹 열쇠 수급
+  const naturalKeyPerDay = keySub ? 720 : 480;
+  const totalNaturalKeys = naturalKeyPerDay * days;
+  const keySubKeys = keySub ? (period === 2 ? 1120 : 2240) : 0;
+  const keysFromSenaPass = senaPass ? (period === 2 ? 540 : 1080) : (period === 2 ? 240 : 480);
+  const keysFromDailySources = (60 + 60) * days; // 일일의뢰 + 길드출석
+  const keysFrom300Attendance = period === 2 ? 240 : 480; // 300일 출석표
+  const keysFromShop = (honorCount + guildCount) * 60 * weeks; // 명예 & 길드 상점
+  const keysFromKeyBox = ((1 + 
+    (keyBoxRuby >= 50 ? 20 : 0) +
+    (keyBoxRuby >= 80 ? 50 : 0) +
+    (keyBoxRuby >= 100 ? 50 : 0) +
+    (keyBoxRuby >= 120 ? 50 : 0)) * 60) * days;
+
+  const totalKeysBeforeRaid = totalNaturalKeys + keySubKeys + keysFromSenaPass +
+    keysFromDailySources + keysFrom300Attendance + keysFromShop + keysFromKeyBox;
+
+  // 🔹 레이드 차감
+  const raidKeysUsed = raidCountPerDay * 6 * days; // 레이드에 사용되는 열쇠 수
+  const keysForCholjak = totalKeysBeforeRaid - raidKeysUsed; // 레이드 열쇠 차감 후 쫄작용 열쇠
+
+  // 🔹 정확한 쫄작원정대 루프 계산 방식 적용
+  const externalRuns = keysForCholjak / 6; // 쫄작원정대 열쇠 이외 열쇠로 쫄작돌리는 횟수
+  let totalCholjakKeys = keysForCholjak;
+    if (includeExpeditionKey) {
+      const choljakQuestKeys = (externalRuns / 2115) * 270;
+      totalCholjakKeys += choljakQuestKeys;
+
+      console.log("원정대 열쇠 보상:", choljakQuestKeys);
+    } else {
+      console.log("원정대 열쇠 포함하지 않음");
+    }
+
+  // 🔹 쫄작 루비 수익
+  const keysPerRun = rubySub ? 60 : 66;
+  const runs = Math.floor(totalCholjakKeys / keysPerRun);
+  const heroCount = runs * 4;
+  const rubyFromCholjak = runs * 80;
+
+  // 🔹 기타 루비 수급
+  const rubyFromRubySub = rubySub ? (days * 200 + (period === 2 ? 165 : 330)) : 0;
+  const rubyFromKeySubBonus = keySub ? (period === 2 ? 100 : 200) : 0;
+  const rubyFromSenaPass = senaPass ? (period === 2 ? 1450 : 2900) : (period === 2 ? 250 : 500);
+  const rubyFromDailyQuest = 100 * days;
+  const rubyFromFreeShop = 30 * days;
+  const rubyFromWeekend = 100 * weeks;
+  const rubyFromConquest = getConquestRuby(conquestTier, weeks);
+
+  const totalRubyIncome = rubyFromCholjak + rubyFromRubySub + rubyFromKeySubBonus +
+    rubyFromSenaPass + rubyFromDailyQuest + rubyFromFreeShop + rubyFromWeekend + rubyFromConquest;
+
+  // 🔹 루비 지출
+  const rubySpentPerDay = getKeyBoxRubyCostPerDay(keyBoxRuby);
+  const rubySpent = rubySpentPerDay * days;
+
+  const netProfit = totalRubyIncome - rubySpent;
+
+  console.log("레이드 차감 전 열쇠:", totalKeysBeforeRaid);
+  console.log("자연회복 열쇠:", totalNaturalKeys);
+  console.log("월정액 열쇠:", keySubKeys);
+  console.log("세나패스 열쇠:", keysFromSenaPass);
+  console.log("일일의뢰 & 길드출석:", keysFromDailySources);
+  console.log("300일 출석표 열쇠:", keysFrom300Attendance);
+  console.log("상점 열쇠:", keysFromShop);
+  console.log("상점 열쇠 상자:", keysFromKeyBox);
+console.log("쫄작에 쓸 열쇠:", keysForCholjak);
+console.log("쫄작 총 루비:", rubyFromCholjak);
+  return {
+    netProfit,
+    heroCount
+  };
+}
+
+  const result2w = compute(2);
+  const result4w = compute(4);
+
+  document.getElementById("profit2w").innerText = Math.floor(result2w.netProfit).toLocaleString();
+  document.getElementById("profit4w").innerText = Math.floor(result4w.netProfit).toLocaleString();
+  document.getElementById("avgProfit").innerText = Math.floor(result2w.netProfit / 14).toLocaleString();
+  document.getElementById("heroCount").innerText = Math.floor(result2w.heroCount).toLocaleString();
+  document.getElementById("avgHeroCount").innerText = Math.floor(result2w.heroCount / 14).toLocaleString();
+}
+
+    
+</script>
+</body>
+</html>
