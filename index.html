@@ -381,8 +381,9 @@
     <h3>📆 2주간 루비 순이익: <span id="profit2w">0</span> 루비</h3>
     <h3>📆 4주간 루비 순이익: <span id="profit4w">0</span> 루비</h3>
     <h3>📈 하루 평균 루비 순이익: <span id="avgProfit">0</span> 루비</h3>
-    <h3>👥 2주 동안 사용되는 쫄 수: <span id="heroCount">0</span> 마리</h4>
-    <h3>📊 하루 평균 사용되는 쫄 수: <span id="avgHeroCount">0</span> 마리</h4>
+    <h3>👥 2주 동안 사용되는 쫄 수: <span id="heroCount">0</span> 마리</h3>
+    <h3>📊 하루 평균 사용되는 쫄 수: <span id="avgHeroCount">0</span> 마리</h3>
+    <h3>💍 악몽 전설 장신구 천장 소요 기간 : <span id="accessoryDays">0</span> 일</h3>
   </div>
 <script>
 
@@ -412,9 +413,11 @@
   document.getElementById("avgProfit").innerText = "0";
   document.getElementById("heroCount").innerText = "0";
   document.getElementById("avgHeroCount").innerText = "0";
+  document.getElementById("accessoryDays").innerText = "0";
 }
 
 function calculateProfit() {
+  const playsForLegendAccessory = 15000;
   const rubySub = document.getElementById("rubySubscription").checked;
   const keySub = document.getElementById("keySubscription").checked;
   const senaPass = document.getElementById("senaPass").checked;
@@ -492,6 +495,9 @@ function calculateProfit() {
       console.log("원정대 열쇠 포함하지 않음");
     }
 
+  // 악몽 전설 장신구 천장 소요기간 계산
+  let accessoryDays = playsForLegendAccessory / ((totalCholjakKeys / 12) / days);
+
   // 🔹 쫄작 루비 수익
   const keysPerRun = rubySub ? 60 : 66;
   const runs = totalCholjakKeys / keysPerRun;
@@ -531,21 +537,24 @@ console.log("2주 동안 사용되는 쫄:", heroCount);
   if(keysForCholjak<0){
     return {
       netProfit,
-      heroCount:0
+      heroCount:0,
+      accessoryDays,
     };
   } else{
       return {
         netProfit,
-        heroCount
+        heroCount,
+        accessoryDays,
       };
     }
 }
 
   const result4w = compute(4);
-  const result2w = compute(2);
-
-  document.getElementById("profit2w").innerText = Math.floor(result2w.netProfit).toLocaleString();
   document.getElementById("profit4w").innerText = Math.floor(result4w.netProfit).toLocaleString();
+  document.getElementById("accessoryDays").innerText = Math.floor(result4w.accessoryDays).toLocaleString();
+
+  const result2w = compute(2);
+  document.getElementById("profit2w").innerText = Math.floor(result2w.netProfit).toLocaleString();
   document.getElementById("avgProfit").innerText = Math.floor(result2w.netProfit / 14).toLocaleString();
   document.getElementById("heroCount").innerText = Math.floor(result2w.heroCount).toLocaleString();
   const avgHero = result2w.heroCount / 14;
