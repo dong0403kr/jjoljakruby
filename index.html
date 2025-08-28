@@ -201,6 +201,9 @@
       cursor: pointer;
     }
 
+    #raidOver11Level {
+      margin-left: 15px;
+    }
     .button-column {
   display: flex;
   flex-direction: column;
@@ -361,6 +364,7 @@
     <label for="raidCount">
       레이드 판 수:
       <input type="number" id="raidCount" min="0" placeholder="예: 10">
+      <label class="checkbox-label"><input type="checkbox" id="raidOver11Level" > 11단계 이상</label>
     </label>
   </div>
 
@@ -405,6 +409,7 @@
   document.getElementById("rubySubscription").checked = false;
   document.getElementById("keySubscription").checked = false;
   document.getElementById("senaPass").checked = false;
+  document.getElementById("raidOver11Level").checked = false;
   document.getElementById("includeExpeditionKey").checked = true;
 
   // 셀렉트 초기화
@@ -430,6 +435,7 @@ function calculateProfit() {
   const rubySub = document.getElementById("rubySubscription").checked;
   const keySub = document.getElementById("keySubscription").checked;
   const senaPass = document.getElementById("senaPass").checked;
+  const raid11Lev = document.getElementById("raidOver11Level").checked;
   const honorCount = parseInt(document.getElementById("honorKeyCount").value) || 0;
   const guildCount = parseInt(document.getElementById("guildKeyCount").value) || 0;
   const keyBoxRuby = parseInt(document.getElementById("keyBoxRuby").value) || 0;
@@ -478,7 +484,7 @@ function calculateProfit() {
     keysFromDailySources + keysFrom300Attendance + keysFromShop + keysFromWeekend + keysFromKeyBox;
 
   // 🔹 레이드 차감
-  const raidKeysUsed = raidCountPerDay * 6 * days; // 레이드에 사용되는 열쇠 수
+  const raidKeysUsed = raid11Lev ? (raidCountPerDay * 12 * days) : (raidCountPerDay * 6 * days) ; // 레이드에 사용되는 열쇠 수. 11단계 이상일 경우 판당 12개 차감
   const keysForCholjak = totalKeysBeforeRaid - raidKeysUsed; // 레이드 열쇠 차감 후 쫄작용 열쇠
   // 레이드 열쇠 소모량이 총 열쇠보다 많을 경우 → 경고 출력
   const raidWarning = document.getElementById("raidWarning");
