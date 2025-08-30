@@ -212,6 +212,12 @@
   align-items: flex-start; /* 왼쪽 정렬 (원하면 center로 변경 가능) */
 }
 
+/* 입력 상자를 감싸는 컨테이너를 기본적으로 숨김 */
+        #keyBoxCount_container {
+            display: none;
+            margin-left: 10px;
+        }
+
 .mobile-break {
   display: inline;
 }
@@ -228,7 +234,7 @@
 
       input[type="number"],
       select {
-        margin-left: 10px;
+        margin-left: 5px;
         width: 100%;
         margin-top: 5px;
       }
@@ -287,7 +293,7 @@
         </li>
         <li>잡화상점, 총력전 출석, 이벤트 보상 등의 다른 변수는 계산에 포함하지 않았으므로 계산 전제조건을 만족한다면 실제 모을 수 있는 루비는 계산결과 보다 많음</li>
         <li>모든 계산 결과는 대략적인 수치로 100% 정확하지 않음 (± 80루비 범위 오차)</li>
-      </ul><div class="credit">Made by 무과금전향</div>
+      </ul><div class="credit">Made by 182.210</div>
     </div>
   </div>
 
@@ -310,7 +316,7 @@
       <li>300일 출석표(10일) : 200개. 1일에 20개로 계산</li>
       <li>주말 부스트 보상(1주) : 100개</li>
     </ul>
-    <div class="credit">Made by 무과금전향</div>
+    <div class="credit">Made by 182.210</div>
   </div>
 </div>
 
@@ -330,7 +336,6 @@
   <div class="section" style="display: flex; gap: 20px;">
     <h3>열쇠상자 구매</h3>
     <label for="keyBoxRuby">
-      사용할 루비:
       <select id="keyBoxRuby">
         <option value="0">구매 안함</option>
         <option value="50">50루비단</option>
@@ -338,6 +343,9 @@
         <option value="100">100루비단</option>
         <option value="120">120루비단</option>
       </select>
+      <span id="keyBoxCount_container">
+            <input type="number" id="keyBoxCount" min="0" max="50" placeholder="기본:50">
+    </span>
     </label>
   </div>
 
@@ -404,7 +412,8 @@
   
     //경고문 초기화
   document.getElementById("raidWarning").style.display = "none";
-    
+  document.getElementById("keyBoxCount_container").style.display = "none";
+
   // 체크박스 초기화
   document.getElementById("rubySubscription").checked = false;
   document.getElementById("keySubscription").checked = false;
@@ -420,6 +429,7 @@
   document.getElementById("honorKeyCount").value = "";
   document.getElementById("guildKeyCount").value = "";
   document.getElementById("raidCount").value = "";
+  document.getElementById("keyBoxCount").value = "";
 
   // 결과창 초기화
   document.getElementById("profit2w").innerText = "0";
@@ -439,16 +449,19 @@ function calculateProfit() {
   const honorCount = parseInt(document.getElementById("honorKeyCount").value) || 0;
   const guildCount = parseInt(document.getElementById("guildKeyCount").value) || 0;
   const keyBoxRuby = parseInt(document.getElementById("keyBoxRuby").value) || 0;
+  const parsedBoxCount = parseInt(document.getElementById("keyBoxCount").value);
+  const keyBoxCount = isNaN(parsedBoxCount) ? 50 : parsedBoxCount;
   const raidCountPerDay = parseInt(document.getElementById("raidCount").value) || 0;
   const conquestTier = document.getElementById("conquestTier").value;
   const includeExpeditionKey = document.getElementById("includeExpeditionKey").checked;
 
-  function getKeyBoxRubyCostPerDay(rubyTier) {
+  function getKeyBoxRubyCostPerDay(rubyTier, boxCount) {
     let cost = 0;
     if (rubyTier >= 50) cost += 50 * 20;
     if (rubyTier >= 80) cost += 80 * 50;
     if (rubyTier >= 100) cost += 100 * 50;
     if (rubyTier >= 120) cost += 120 * 50;
+    cost -= rubyTier*(50-boxCount);
     return cost;
   }
 
@@ -478,7 +491,7 @@ function calculateProfit() {
     (keyBoxRuby >= 50 ? 20 : 0) +
     (keyBoxRuby >= 80 ? 50 : 0) +
     (keyBoxRuby >= 100 ? 50 : 0) +
-    (keyBoxRuby >= 120 ? 50 : 0)) * 60) * days;
+    (keyBoxRuby >= 120 ? 50 : 0) - (50-keyBoxCount)) * 60) * days;
 
   const totalKeysBeforeRaid = totalNaturalKeys + keySubKeys + keysFromSenaPass +
     keysFromDailySources + keysFrom300Attendance + keysFromShop + keysFromWeekend + keysFromKeyBox;
@@ -533,7 +546,7 @@ function calculateProfit() {
     rubyFromSenaPass + rubyFromDailyQuest + rubyFrom300Attendance + rubyFromFreeShop + rubyFromWeekend + rubyFromConquest;
 
   // 🔹 루비 지출
-  const rubySpentPerDay = getKeyBoxRubyCostPerDay(keyBoxRuby);
+  const rubySpentPerDay = getKeyBoxRubyCostPerDay(keyBoxRuby,keyBoxCount);
   const rubySpent = rubySpentPerDay * days;
 
   const netProfit = totalRubyIncome - rubySpent;
@@ -630,6 +643,21 @@ function enforceMaxValue(id, max) {
 // 적용 대상 input 요소 등록
 enforceMaxValue("honorKeyCount", 7);
 enforceMaxValue("guildKeyCount", 7);
+enforceMaxValue("keyBoxCount", 50);
+
+const selectBox = document.getElementById('keyBoxRuby');
+const keyBoxCountContainer = document.getElementById('keyBoxCount_container');
+
+// 2. select 상자의 값이 변경될 때마다 함수를 실행하도록 이벤트 리스너를 추가합니다.
+selectBox.addEventListener('change', function() {
+            // 3. 만약 선택된 option의 value가 'custom'이라면
+    if (this.value === '80' || this.value === '100' || this.value === '120') {
+                // 입력 상자를 보여줍니다.
+        keyBoxCountContainer.style.display = 'inline-block';
+    } else {
+                // 그 외의 다른 옵션을 선택했다면, 입력 상자를 다시 숨깁니다.
+        keyBoxCountContainer.style.display = 'none';
+    }});
 </script>
 </body>
 </html>
