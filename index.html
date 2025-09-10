@@ -218,6 +218,18 @@
             margin-left: 10px;
         }
 
+        #premiumOption {
+    display: none;
+  }
+
+  #openSubModal {
+    cursor: pointer;
+  }
+
+  #openSenaPassModal {
+    cursor: pointer;
+  }
+
 .mobile-break {
   display: inline;
 }
@@ -286,9 +298,10 @@
       </ul>
       <h3>📌 유의사항</h3>
       <ul>
+        <li>각 카테고리(굵은 글씨)를 클릭하면 해당값을 볼 수 있음</li>
         <li>쫄작원정대 열쇠는 쫄작원정대Ⅱ 마지막 사이클 기준</li>
         <li>총력전 루비 보상은 2주에 한번씩 받는 걸로 계산</li>
-        <li>세나패스는 4주에 한번씩 초기화, 풀참시 12일이면 모든 보상을 받을 수 있으므로, 
+        <li>세나패스는 풀참시 12일이면 모든 보상을 받을 수 있으므로, 
           2주와 4주 순이익에 세나패스가 미치는 영향이 서로 같도록 처리함. 그래서 2주 동안의 순이익이 4주 동안의 순이익보다 일평균 순이익이 높음
         </li>
         <li>잡화상점, 총력전 출석, 이벤트 보상 등의 다른 변수는 계산에 포함하지 않았으므로 계산 전제조건을 만족한다면 실제 모을 수 있는 루비는 계산결과 보다 많음</li>
@@ -303,7 +316,6 @@
     <h3>🗝️ 계산에 기본 포함된 열쇠</h3>
     <ul>
       <li>자동 충전 열쇠(1일) : 480개(기본) / 720개(월정액)</li>
-      <li>세나패스 열쇠(28일 중 12일) : 480개(일반) / 1080개(프리미엄)</li>
       <li>일일의뢰 + 길드출석(1일) : 120개</li>
       <li>300일 출석표(10일) : 240개. 1일에 24개로 계산</li>
       <li>주말 푸시보상(1주) : 200개</li>
@@ -311,7 +323,6 @@
     </ul>
     <h3>♦️ 계산에 기본 포함된 루비</h3>
     <ul>
-      <li>세나패스 루비(28일 중 12일) : 500개(일반) / 2900개(프리미엄)</li>
       <li>일일의뢰 + 상점 무료루비(1일) : 130개</li>
       <li>300일 출석표(10일) : 200개. 1일에 20개로 계산</li>
       <li>주말 부스트 보상(1주) : 100개</li>
@@ -321,16 +332,55 @@
 </div>
 
   <div class="section" style="display: flex; gap: 20px;">
-    <h3>월정액 여부</h3>
+    <h3 id="openSubModal">월정액 여부</h3>
     <div class="checkbox-row">
         <label class="checkbox-label"><input type="checkbox" id="rubySubscription" > 루비 월정액</label>
         <label class="checkbox-label"><input type="checkbox" id="keySubscription" > 열쇠 월정액</label>
     </div>
   </div>
 
-  <div class="section" style="display: flex; gap: 20px;">
-    <h3>세나패스</h3>
-    <label class="checkbox-label"><input type="checkbox" id="senaPass" > 세나패스 구매함</label>
+    <div id="MonthlySubOverlay" class="overlay">
+    <div class="assumption-box">
+      <span class="close-btn" onclick="closeSubModal()">&times;</span>
+      <h3>♦️ 루비 월정액 구매 시</h3>
+      <ul>
+        <li>매일 출석 루비 200개</li>
+        <li>월정액 구매 보너스 루비 330개 (4주 당 한번)</li>
+        <li>모험 경험치 보너스 10% (쫄작 판수 1판 감소)</li>
+      </ul>
+      <h3>🗝️ 열쇠 월정액 구매 시</h3>
+      <ul>
+        <li>매일 출석 열쇠 80개</li>
+        <li>월정액 구매 보너스 루비 200개 (4주 당 한번)</li>
+        <li>자동 충전 열쇠 720개 (24시간 기준)</li>
+      </ul>
+      </ul><div class="credit">Made by 182.210</div>
+    </div>
+  </div>
+
+  <div class="section" style="display: flex; gap: 20px; align-items: center;">
+    <h3 id="openSenaPassModal">세나패스</h3>
+    <label class="checkbox-label"><input type="checkbox" id="senaPass" > 세나패스 포함</label>
+    <span id="premiumOption">
+      <label class="checkbox-label"><input type="checkbox" id="senaPass_premium" > 프리미엄 구매</label>
+    </span>
+  </div>
+
+  <div id="SenaPassOverlay" class="overlay">
+    <div class="assumption-box">
+      <span class="close-btn" onclick="closeSenaPassModal()">&times;</span>
+      <h3>기본 세나패스 풀참 시</h3>
+      <ul>
+        <li>열쇠 총 480개</li>
+        <li>루비 총 500개</li>
+      </ul>
+      <h3>프리미엄 패스 구매 시</h3>
+      <ul>
+        <li>기본 보상 포함 열쇠 총 1080개</li>
+        <li>기본 보상 포함 루비 총 2900개</li>
+      </ul>
+      </ul><div class="credit">Made by 182.210</div>
+    </div>
   </div>
 
   <div class="section" style="display: flex; gap: 20px;">
@@ -423,6 +473,7 @@
   document.getElementById("rubySubscription").checked = false;
   document.getElementById("keySubscription").checked = false;
   document.getElementById("senaPass").checked = false;
+  document.getElementById("senaPass_premium").checked = false;
   document.getElementById("raidOver11Level").checked = false;
   document.getElementById("includeExpeditionKey").checked = true;
 
@@ -451,6 +502,7 @@ function calculateProfit() {
   const rubySub = document.getElementById("rubySubscription").checked;
   const keySub = document.getElementById("keySubscription").checked;
   const senaPass = document.getElementById("senaPass").checked;
+  const senaPassPremium = document.getElementById("senaPass_premium").checked;
   const raid11Lev = document.getElementById("raidOver11Level").checked;
   const honorCount = parseInt(document.getElementById("honorKeyCount").value) || 0;
   const guildCount = parseInt(document.getElementById("guildKeyCount").value) || 0;
@@ -489,7 +541,7 @@ function calculateProfit() {
   const naturalKeyPerDay = keySub ? 720 : 480;
   const totalNaturalKeys = naturalKeyPerDay * days;
   const keySubKeys = keySub ? (period === 2 ? 1120 : 2240) : 0;
-  const keysFromSenaPass = senaPass ? 1080 : 480; // 구매 후 2주안에 끝낸다는 가정 하에(period === 2 ? 540 : 1080) : (period === 2 ? 240 : 480);
+  const keysFromSenaPass = senaPass ? (senaPassPremium ? 1080 : 480) : 0; // 구매 후 2주안에 끝낸다는 가정 하에(period === 2 ? 540 : 1080) : (period === 2 ? 240 : 480);
   const keysFromDailySources = (60 + 60) * days; // 일일의뢰 + 길드출석
   const keysFrom300Attendance = 24 * days; // 300일 출석표 열쇠. 10일에 240개 이므로 하루에 24개로 계산
   const keysFromShop = (honorCount + guildCount + arenaCount) * 60 * weeks; // 명예 & 길드 상점
@@ -542,7 +594,7 @@ function calculateProfit() {
   // 🔹 기타 루비 수급
   const rubyFromRubySub = rubySub ? (days * 200 + (period === 2 ? 165 : 330)) : 0;
   const rubyFromKeySubBonus = keySub ? (period === 2 ? 100 : 200) : 0;
-  const rubyFromSenaPass = senaPass ? 2900 : 500; // (period === 2 ? 1450 : 2900) : (period === 2 ? 250 : 500);
+  const rubyFromSenaPass = senaPass ? (senaPassPremium ? 2900 : 500) : 0; // (period === 2 ? 1450 : 2900) : (period === 2 ? 250 : 500);
   const rubyFromDailyQuest = 100 * days;
   const rubyFrom300Attendance = 20 * days; // 300일 출석표 루비. 10일에 200개 이므로 하루에 20개로 계산
   const rubyFromFreeShop = 30 * days;
@@ -586,6 +638,7 @@ console.log("2주 동안 사용되는 쫄:", heroCount);
 
   const result4w = compute(4);
   document.getElementById("profit4w").innerText = Math.floor(result4w.netProfit).toLocaleString();
+  // document.getElementById("avgProfit").innerText = Math.floor(result4w.netProfit / 28).toLocaleString(); // 4주간 일평균 수익
   document.getElementById("accessoryDays").innerText = Math.floor(result4w.accessoryDays).toLocaleString();
 
   const result2w = compute(2);
@@ -636,6 +689,43 @@ const includedItemsOverlay = document.getElementById("includedItemsOverlay");
     }
   });
 
+  // 월정액 설명
+const SubModalOverlay = document.getElementById('MonthlySubOverlay');
+const openSubModalBtn = document.getElementById('openSubModal');
+
+openSubModalBtn.addEventListener("click", () => {
+  SubModalOverlay.classList.add("show");
+});
+
+function closeSubModal() {
+  SubModalOverlay.classList.remove("show");
+}
+
+SubModalOverlay.addEventListener("click", (e) => {
+  if (e.target === SubModalOverlay) {
+    SubModalOverlay.classList.remove("show");
+  }
+});
+
+// 세나패스 설명
+const SenaPassModalOverlay = document.getElementById('SenaPassOverlay');
+const openSenaPassModalBtn = document.getElementById('openSenaPassModal');
+
+openSenaPassModalBtn.addEventListener("click", () => {
+  SenaPassModalOverlay.classList.add("show");
+});
+
+function closeSenaPassModal() {
+  SenaPassModalOverlay.classList.remove("show");
+}
+
+SenaPassModalOverlay.addEventListener("click", (e) => {
+  if (e.target === SenaPassModalOverlay) {
+    SenaPassModalOverlay.classList.remove("show");
+  }
+});
+
+
   // 숫자 입력이 8 이상이면 자동으로 7로 변경
 function enforceMaxValue(id, max) {
   const input = document.getElementById(id);
@@ -650,6 +740,7 @@ function enforceMaxValue(id, max) {
 // 적용 대상 input 요소 등록
 enforceMaxValue("honorKeyCount", 7);
 enforceMaxValue("guildKeyCount", 7);
+enforceMaxValue("arenaKeyCount", 7);
 enforceMaxValue("keyBoxCount", 50);
 
 const selectBox = document.getElementById('keyBoxRuby');
@@ -665,6 +756,20 @@ selectBox.addEventListener('change', function() {
                 // 그 외의 다른 옵션을 선택했다면, 입력 상자를 다시 숨깁니다.
         keyBoxCountContainer.style.display = 'none';
     }});
+
+const senaPassCheckbox = document.getElementById('senaPass');
+const premiumCheckbox = document.getElementById('senaPass_premium');
+const premiumOptionContainer = document.getElementById('premiumOption');
+
+senaPassCheckbox.addEventListener('change', function() {
+  if(this.checked) {
+    premiumOptionContainer.style.display = 'inline-block';
+  } else {
+    premiumCheckbox.checked = false;
+    premiumOptionContainer.style.display = 'none';
+  }
+});
+
 </script>
 </body>
 </html>
