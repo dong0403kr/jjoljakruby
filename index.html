@@ -353,12 +353,17 @@
     <h3>일주일 동안 상점에서 구매할 열쇠 개수</h3>
     <label for="honorKeyCount">
       명예상점 구매 횟수:
-      <input type="number" id="honorKeyCount" min="0" max="7" placeholder="예: 3">
+      <input type="number" id="honorKeyCount" min="0" max="7" placeholder="최대 7, 미 입력 시 0">
     </label>
 
     <label for="guildKeyCount">
       길드상점 구매 횟수:
-      <input type="number" id="guildKeyCount" min="0" max="7" placeholder="예: 2">
+      <input type="number" id="guildKeyCount" min="0" max="7" placeholder="최대 7, 미 입력 시 0">
+    </label>
+
+    <label for="arenaKeyCount">
+      결투장상점 구매 횟수:
+      <input type="number" id="arenaKeyCount" min="0" max="7" placeholder="최대 7, 미 입력 시 0">
     </label>
   </div>
 
@@ -371,7 +376,7 @@
     </div>
     <label for="raidCount">
       레이드 판 수:
-      <input type="number" id="raidCount" min="0" placeholder="예: 10">
+      <input type="number" id="raidCount" min="0" placeholder="예: 10, 미 입력 시 0">
       <label class="checkbox-label"><input type="checkbox" id="raidOver11Level" > 11단계 이상</label>
     </label>
   </div>
@@ -402,8 +407,8 @@
     <h3>📆 2주간 루비 순이익: <span id="profit2w">0</span> 루비</h3>
     <h3>📆 4주간 루비 순이익: <span id="profit4w">0</span> 루비</h3>
     <h3>📈 (2주 기준)일평균 루비 순이익: <span id="avgProfit">0</span> 루비</h3>
-    <h3>👥 2주 동안 사용되는 쫄 수: <span id="heroCount">0</span> 마리</h3>
-    <h3>📊 하루 평균 사용되는 쫄 수: <span id="avgHeroCount">0</span> 마리</h3>
+    <h3>👥 2주간 만렙찍는 쫄 수: <span id="heroCount">0</span> 마리</h3>
+    <h3>📊 하루 평균 만렙찍는 쫄 수: <span id="avgHeroCount">0</span> 마리</h3>
     <h3>💍 악몽 전설 장신구 천장 소요 기간 : <span id="accessoryDays">0</span> 일</h3>
   </div>
 <script>
@@ -428,6 +433,7 @@
   // 숫자 입력 초기화
   document.getElementById("honorKeyCount").value = "";
   document.getElementById("guildKeyCount").value = "";
+  document.getElementById("arenaKeyCount").value = "";
   document.getElementById("raidCount").value = "";
   document.getElementById("keyBoxCount").value = "";
 
@@ -448,6 +454,7 @@ function calculateProfit() {
   const raid11Lev = document.getElementById("raidOver11Level").checked;
   const honorCount = parseInt(document.getElementById("honorKeyCount").value) || 0;
   const guildCount = parseInt(document.getElementById("guildKeyCount").value) || 0;
+  const arenaCount = parseInt(document.getElementById("arenaKeyCount").value) || 0;
   const keyBoxRuby = parseInt(document.getElementById("keyBoxRuby").value) || 0;
   const parsedBoxCount = parseInt(document.getElementById("keyBoxCount").value);
   const keyBoxCount = isNaN(parsedBoxCount) ? 50 : parsedBoxCount;
@@ -485,7 +492,7 @@ function calculateProfit() {
   const keysFromSenaPass = senaPass ? 1080 : 480; // 구매 후 2주안에 끝낸다는 가정 하에(period === 2 ? 540 : 1080) : (period === 2 ? 240 : 480);
   const keysFromDailySources = (60 + 60) * days; // 일일의뢰 + 길드출석
   const keysFrom300Attendance = 24 * days; // 300일 출석표 열쇠. 10일에 240개 이므로 하루에 24개로 계산
-  const keysFromShop = (honorCount + guildCount) * 60 * weeks; // 명예 & 길드 상점
+  const keysFromShop = (honorCount + guildCount + arenaCount) * 60 * weeks; // 명예 & 길드 상점
   const keysFromWeekend = 200 * weeks; // 주말 푸시 열쇠 (토,일 100개씩)
   const keysFromKeyBox = ((1 + 
     (keyBoxRuby >= 50 ? 20 : 0) +
@@ -515,7 +522,7 @@ function calculateProfit() {
   const externalRuns = keysForCholjak / 6; // 쫄작원정대 열쇠 이외 열쇠로 쫄작돌리는 횟수
   let totalCholjakKeys = keysForCholjak;
     if (includeExpeditionKey) {
-      const choljakQuestKeys = (externalRuns / 2115) * 270;
+      const choljakQuestKeys = (externalRuns / 2115) * 270; // 2160(쫄작원정대 마지막 사이클 횟수) - 45(쫄작원정대 열쇠로 돌릴 수 있는 횟수) = 2115
       totalCholjakKeys += choljakQuestKeys;
 
       console.log("원정대 열쇠 보상:", choljakQuestKeys);
