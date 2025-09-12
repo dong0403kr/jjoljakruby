@@ -241,6 +241,10 @@
     display: none;
   }
 
+  .credit::after {
+    content: '최종 수정일 2025.09.12';
+  }
+
     @media (max-width: 480px) {
       .rubyuse {
         line-height: 24px;
@@ -306,15 +310,13 @@
       </ul>
       <h3>📌 유의사항</h3>
       <ul>
-        <li>각 카테고리(굵은 글씨)를 클릭하면 해당값을 볼 수 있음</li>
+        <li>각 카테고리(굵은 글씨)를 클릭하면 관련 설명을 볼 수 있음</li>
+        <li>세나패스, 월정액 구매 보너스 등 단기간에 벌어들이는 재화까지 계산에 반영했기 때문에 2주간 순이익과 4주간 순이익은 실제와 다름. 계산의 편의를 위해 2주씩 나눠 받는 것으로 계산</li>
         <li>쫄작원정대 열쇠는 쫄작원정대Ⅱ 마지막 사이클 기준</li>
         <li>총력전 루비 보상은 2주에 한번씩 받는 걸로 계산</li>
-        <li>세나패스는 풀참시 12일이면 모든 보상을 받을 수 있으므로, 
-          2주와 4주 순이익에 세나패스가 미치는 영향이 서로 같도록 처리함. 그래서 2주 동안의 순이익이 4주 동안의 순이익보다 일평균 순이익이 높음
-        </li>
-        <li>잡화상점, 총력전 출석, 이벤트 보상 등의 다른 변수는 계산에 포함하지 않았으므로 계산 전제조건을 만족한다면 실제 모을 수 있는 루비는 계산결과 보다 많음</li>
+        <li>잡화상점, 총력전 라운드 출석, 이벤트 보상 등의 불규칙 변수는 계산에 포함하지 않았으므로 계산 전제조건을 만족한다면 실제 모을 수 있는 루비는 계산결과 보다 많음</li>
         <li>모든 계산 결과는 대략적인 수치로 100% 정확하지 않음 (± 80루비 범위 오차)</li>
-      </ul><div class="credit">Made by 182.210</div>
+      </ul><div class="credit"></div>
     </div>
   </div>
 
@@ -335,7 +337,7 @@
       <li>300일 출석표(10일) : 200개. 1일에 20개로 계산</li>
       <li>주말 부스트 보상(1주) : 100개</li>
     </ul>
-    <div class="credit">Made by 182.210</div>
+    <div class="credit"></div>
   </div>
 </div>
 
@@ -353,16 +355,16 @@
       <h3>♦️ 루비 월정액 구매 시</h3>
       <ul>
         <li>매일 출석 루비 200개</li>
-        <li>월정액 구매 보너스 루비 330개 (4주 당 한번)</li>
+        <li>월정액 구매 보너스 루비 330개<br>(4주 당 한번, 2주에 165개로 반영)</li>
         <li>모험 경험치 보너스 10% (쫄작 판수 1판 감소)</li>
       </ul>
       <h3>🗝️ 열쇠 월정액 구매 시</h3>
       <ul>
         <li>매일 출석 열쇠 80개</li>
-        <li>월정액 구매 보너스 루비 200개 (4주 당 한번)</li>
+        <li>월정액 구매 보너스 루비 200개<br>(4주 당 한번, 2주에 100개로 반영)</li>
         <li>자동 충전 열쇠 720개 (24시간 기준)</li>
       </ul>
-      </ul><div class="credit">Made by 182.210</div>
+      </ul><div class="credit"></div>
     </div>
   </div>
 
@@ -379,15 +381,15 @@
       <span class="close-btn" onclick="closeSenaPassModal()">&times;</span>
       <h3>기본 세나패스 풀참 시</h3>
       <ul>
-        <li>열쇠 총 480개</li>
-        <li>루비 총 500개</li>
+        <li>열쇠 총 480개<br>(2주에 240개로 반영)</li>
+        <li>루비 총 500개<br>(2주에 250개로 반영)</li>
       </ul>
       <h3>프리미엄 패스 구매 시</h3>
       <ul>
-        <li>기본 보상 포함 열쇠 총 1080개</li>
-        <li>기본 보상 포함 루비 총 2900개</li>
+        <li>기본 보상 포함 열쇠 총 1080개<br>(2주에 540개로 반영)</li>
+        <li>기본 보상 포함 루비 총 2900개<br>(2주에 1450개로 반영)</li>
       </ul>
-      </ul><div class="credit">Made by 182.210</div>
+      </ul><div class="credit"></div>
     </div>
   </div>
 
@@ -482,7 +484,7 @@
         <li>4장 : 750루비</li>
         <li>5장 이상 : + 500루비씩</li>
       </ul>
-      </ul><div class="credit">Made by 182.210</div>
+      </ul><div class="credit"></div>
     </div>
   </div>
 
@@ -491,7 +493,7 @@
     <button onclick="resetForm()" class="resetbutton">🔄 초기화</button>
     <h3>📆 2주간 루비 순이익: <span id="profit2w">0</span> 루비</h3>
     <h3>📆 4주간 루비 순이익: <span id="profit4w">0</span> 루비</h3>
-    <h3>♦️ (2주 기준)일평균 루비 순이익: <span id="avgProfit">0</span> 루비</h3>
+    <h3>♦️ 일평균 루비 순이익: <span id="avgProfit">0</span> 루비</h3>
     <h4>👥 2주간 만렙찍는 쫄 수: <span id="heroCount">0</span> 마리</h3>
     <h4>📊 하루 평균 만렙찍는 쫄 수: <span id="avgHeroCount">0</span> 마리</h3>
     <h4>💍 악몽 전설 장신구 천장 소요 기간 : <span id="accessoryDays">0</span> 일</h3>
@@ -578,7 +580,7 @@ function calculateProfit() {
   const naturalKeyPerDay = keySub ? 720 : 480;
   const totalNaturalKeys = naturalKeyPerDay * days;
   const keySubKeys = keySub ? (period === 2 ? 1120 : 2240) : 0;
-  const keysFromSenaPass = senaPass ? (senaPassPremium ? 1080 : 480) : 0; // 구매 후 2주안에 끝낸다는 가정 하에(period === 2 ? 540 : 1080) : (period === 2 ? 240 : 480);
+  const keysFromSenaPass = senaPass ? (senaPassPremium ? (period === 2 ? 540 : 1080) : (period === 2 ? 240 : 480)) : 0; // 구매 후 2주안에 끝내는걸 반영할 경우 senaPass ? (senaPassPremium ? 1080 : 480) : 0;
   const keysFromDailySources = (60 + 60) * days; // 일일의뢰 + 길드출석
   const keysFrom300Attendance = 24 * days; // 300일 출석표 열쇠. 10일에 240개 이므로 하루에 24개로 계산
   const keysFromShop = (honorCount + guildCount + arenaCount) * 60 * weeks; // 명예 & 길드 상점
@@ -631,7 +633,7 @@ function calculateProfit() {
   // 🔹 기타 루비 수급
   const rubyFromRubySub = rubySub ? (days * 200 + (period === 2 ? 165 : 330)) : 0;
   const rubyFromKeySubBonus = keySub ? (period === 2 ? 100 : 200) : 0;
-  const rubyFromSenaPass = senaPass ? (senaPassPremium ? 2900 : 500) : 0; // (period === 2 ? 1450 : 2900) : (period === 2 ? 250 : 500);
+  const rubyFromSenaPass = senaPass ? (senaPassPremium ? (period === 2 ? 1450 : 2900) : (period === 2 ? 250 : 500)) : 0; // (senaPassPremium ? 2900 : 500) : 0;
   const rubyFromDailyQuest = 100 * days;
   const rubyFrom300Attendance = 20 * days; // 300일 출석표 루비. 10일에 200개 이므로 하루에 20개로 계산
   const rubyFromFreeShop = 30 * days;
@@ -674,13 +676,13 @@ console.log("2주 동안 사용되는 쫄:", heroCount);
 }
 
   const result4w = compute(4);
-  document.getElementById("profit4w").innerText = Math.floor(result4w.netProfit).toLocaleString();
+  document.getElementById("profit4w").innerText = Math.round(result4w.netProfit).toLocaleString();
   // document.getElementById("avgProfit").innerText = Math.floor(result4w.netProfit / 28).toLocaleString(); // 4주간 일평균 수익
-  document.getElementById("accessoryDays").innerText = Math.floor(result4w.accessoryDays).toLocaleString();
+  document.getElementById("accessoryDays").innerText = Math.round(result4w.accessoryDays).toLocaleString();
 
   const result2w = compute(2);
-  document.getElementById("profit2w").innerText = Math.floor(result2w.netProfit).toLocaleString();
-  document.getElementById("avgProfit").innerText = Math.floor(result2w.netProfit / 14).toLocaleString();
+  document.getElementById("profit2w").innerText = Math.round(result2w.netProfit).toLocaleString();
+  document.getElementById("avgProfit").innerText = Math.round(result2w.netProfit / 14).toLocaleString();
   document.getElementById("heroCount").innerText = Math.floor(result2w.heroCount).toLocaleString();
   const avgHero = result2w.heroCount / 14;
   document.getElementById("avgHeroCount").innerText =
