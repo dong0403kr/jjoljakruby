@@ -106,13 +106,13 @@
   display: none;
   justify-content: center;
   align-items: center;
-  animation: fadeOut 0.3s ease forwards;
+  animation: fadeOut 0.2s ease forwards;
   z-index: 1000;
 }
 
 .overlay.show {
   display: flex;
-  animation: fadeIn 0.3s ease forwards;
+  animation: fadeIn 0.2s ease forwards;
 }
 
 @keyframes fadeIn {
@@ -132,7 +132,7 @@
   width: 90%;
   box-shadow: 0 4px 8px rgba(0,0,0,0.2);
   position: relative;
-  animation: fadeIn 0.3s ease forwards;
+  animation: fadeIn 0.2s ease forwards;
 }
 
 .assumption-box h3 {
@@ -173,6 +173,7 @@
 
 .assumption-button {
   background-color: #777;
+  transition: background-color 0.15s ease-in-out;
   font-size: 14px;
   padding: 7px 10px;
   white-space: nowrap;
@@ -222,12 +223,15 @@
     display: none;
   }
 
-  #openSubModal {
+  #openSubModal, #openSenaPassModal, #openRubyToUseModal {
     cursor: pointer;
+    color: #333;
+    transition: color 0.15s ease-in-out;
   }
 
-  #openSenaPassModal {
+  #openSubModal:hover, #openSenaPassModal:hover, #openRubyToUseModal:hover {
     cursor: pointer;
+    color:#e06040
   }
 
 .mobile-break {
@@ -455,11 +459,32 @@
 </div>
 
 <div class="section" style="display: flex; gap: 7px;">
-  <h3 class="rubyuse">매일 일정하게 <span class="mobile-br"><br></span>사용할 루비</h3>
+  <h3 id="openRubyToUseModal" class="rubyuse">매일 일정하게 <span class="mobile-br"><br></span>사용할 루비</h3>
   <label for="rubyToUse">
       <input type="number" id="rubyToUse" min="0" placeholder="미 입력 시 0">
     </label>
 </div>
+
+<div id="rubyToUseOverlay" class="overlay">
+    <div class="assumption-box">
+      <span class="close-btn" onclick="closeRubyToUseModal()">&times;</span>
+      <h3>♟️ 세나체스 회당 루비 비용</h3>
+      <ul>
+        <li>2회차 : 50루비</li>
+        <li>3회차 : 100루비</li>
+        <li>4회차 이상 : 150루비</li>
+      </ul>
+      <h3>🎫 성장던전 티켓 구매비용</h3>
+      <ul>
+        <li>1번째 : 100루비</li>
+        <li>2번째 : 150루비</li>
+        <li>3번째 : 200루비</li>
+        <li>4번째 : 300루비</li>
+        <li>5번째 이상 : 500루비</li>
+      </ul>
+      </ul><div class="credit">Made by 182.210</div>
+    </div>
+  </div>
 
   <div class="section">
     <button onclick="calculateProfit()">💰 루비 순이익 계산하기</button>
@@ -737,6 +762,23 @@ SenaPassModalOverlay.addEventListener("click", (e) => {
   }
 });
 
+// 매일 사용 루비 설명
+const rubyToUseModalOverlay = document.getElementById('rubyToUseOverlay');
+const openrubyToUseModalBtn = document.getElementById('openRubyToUseModal');
+
+openrubyToUseModalBtn.addEventListener("click", () => {
+  rubyToUseModalOverlay.classList.add("show");
+});
+
+function closeRubyToUseModal() {
+  rubyToUseModalOverlay.classList.remove("show");
+}
+
+rubyToUseModalOverlay.addEventListener("click", (e) => {
+  if (e.target === rubyToUseModalOverlay) {
+    rubyToUseModalOverlay.classList.remove("show");
+  }
+});
 
   // 숫자 입력이 8 이상이면 자동으로 7로 변경
 function enforceMaxValue(id, max) {
