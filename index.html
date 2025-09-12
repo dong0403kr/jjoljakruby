@@ -76,18 +76,29 @@
       cursor: pointer;
     }
 
+    /* 모바일 터치 및 데스크탑 클릭 피드백 */
+  button:active {
+    background-color: #45a049;
+  }
+  /* 데스크탑 마우스 호버 전용 효과 */
+  @media (hover: hover) {
     button:hover {
       background-color: #45a049;
     }
-
+  }
     .resetbutton {
       background-color: #ccc; 
       color: #333;
     }
     
+    .resetbutton:active {
+    background-color: #b4b4b4; 
+  }
+  @media (hover: hover) {
     .resetbutton:hover {
       background-color: #b4b4b4; 
     }
+  }
 
     .checkbox-row {
       display: flex;
@@ -191,12 +202,18 @@
   bottom: 10px;
   right: 10px;
   font-size: 13px;
-  color: #999;
+  color: #b6b6b69a;
 }
 
-.assumption-button:hover {
+.assumption-button:active {
+    background-color: #e06040;
+  }
+  
+  @media (hover: hover) {
+    .assumption-button:hover {
       background-color: #e06040;
     }
+  }
 
     .checkbox-label {
       cursor: pointer;
@@ -253,13 +270,22 @@
     font-size: auto;
     padding: 7px;
     color: #333;
-    transition: color 0.15s ease-in-out;
-    transition: background-color 0.15s ease-in-out;
+    transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out;
+    touch-action: manipulation;
   }
 
-  .max-btn:hover{
+  /* 모바일 터치 및 데스크탑 클릭 피드백 */
+  .max-btn:active {
     background-color: #999;
-    color:#ffffff;
+    color: #ffffff;
+  }
+
+  /* 데스크탑 마우스 호버 전용 효과 */
+  @media (hover: hover) {
+    .max-btn:hover {
+      background-color: #999;
+      color: #ffffff;
+    }
   }
 
     @media (max-width: 480px) {
@@ -293,7 +319,6 @@
       .max-btn {
         width: auto;
         margin-left: 4px;
-        touch-action: manipulation;
       }
       .title-wrapper {
         padding: 8px 25px;
