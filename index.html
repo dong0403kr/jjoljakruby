@@ -20,7 +20,7 @@
       margin-right: auto;
     }
 
-    label, h3, h4, h1, select, input[type="checkbox"] {
+    label, h3, h4, h1, ul, select, input[type="checkbox"] {
       -webkit-user-select: none; /* Safari */
       -moz-user-select: none;    /* Firefox */
       -ms-user-select: none;     /* IE/Edge */
@@ -51,7 +51,7 @@
     select {
       flex: 1;
       padding: 6px;
-      margin-left: 10px;
+      margin-left: 0px;
       cursor: pointer;
     }
     
@@ -242,7 +242,24 @@
   }
 
   .credit::after {
-    content: '최종 수정일 2025.09.12';
+    content: '최종 수정일 2025.09.13';
+  }
+
+  .max-btn{
+    background-color: #ffffff;
+    border: 1px solid #333;
+    margin-top: 0;
+    margin-left: 10px;
+    font-size: auto;
+    padding: 7px;
+    color: #333;
+    transition: color 0.15s ease-in-out;
+    transition: background-color 0.15s ease-in-out;
+  }
+
+  .max-btn:hover{
+    background-color: #999;
+    color:#ffffff;
   }
 
     @media (max-width: 480px) {
@@ -260,13 +277,23 @@
       select {
         margin-left: 5px;
         width: 100%;
-        margin-top: 5px;
+        margin-top: 2px;
+      }
+
+      #arenaKeyCount, #guildKeyCount, #honorKeyCount{
+        margin-left: 0px;
+        width: 100%;
+        margin-top: 2px;
       }
 
       button {
         width: 100%;
       }
 
+      .max-btn {
+        width: auto;
+        margin-left: 4px;
+      }
       .title-wrapper {
         padding: 8px 25px;
         line-height: 40px;
@@ -283,6 +310,10 @@
   }
   .mobile-br {
     display: inline;
+  }
+
+  .credit::after {
+    content: '모바일은 터치로 팝업을 끌 수 있음 | 최종 수정일 2025.09.13';
   }
     }
   </style>
@@ -413,16 +444,19 @@
     <h3>일주일 동안 상점에서 구매할 열쇠 개수</h3>
     <label for="arenaKeyCount">
       결투장상점 구매 횟수:
+      <button class="max-btn" data-target="arenaKeyCount">최대</button>
       <input type="number" id="arenaKeyCount" min="0" max="7" placeholder="최대 7, 미 입력 시 0">
     </label>
 
     <label for="honorKeyCount">
       명예상점 구매 횟수:
+      <button class="max-btn" data-target="honorKeyCount">최대</button>
       <input type="number" id="honorKeyCount" min="0" max="7" placeholder="최대 7, 미 입력 시 0">
     </label>
 
     <label for="guildKeyCount">
       길드상점 구매 횟수:
+      <button class="max-btn" data-target="guildKeyCount">최대</button>
       <input type="number" id="guildKeyCount" min="0" max="7" placeholder="최대 7, 미 입력 시 0">
     </label>
   </div>
@@ -437,7 +471,7 @@
     <label for="raidCount">
       레이드 판 수:
       <input type="number" id="raidCount" min="0" placeholder="예: 10, 미 입력 시 0">
-      <label class="checkbox-label"><input type="checkbox" id="raidOver11Level" > 11단계 이상</label>
+      <label class="checkbox-label"><input type="checkbox" id="raidOver11Level" checked> 11단계 이상</label>
     </label>
   </div>
 
@@ -511,7 +545,7 @@
   document.getElementById("keySubscription").checked = false;
   document.getElementById("senaPass").checked = false;
   document.getElementById("senaPass_premium").checked = false;
-  document.getElementById("raidOver11Level").checked = false;
+  document.getElementById("raidOver11Level").checked = true;
   document.getElementById("includeExpeditionKey").checked = true;
 
   // 셀렉트 초기화
@@ -695,6 +729,7 @@ console.log("2주 동안 사용되는 쫄:", heroCount);
 const overlay = document.getElementById("assumptionOverlay");
 const openBtn = document.getElementById("showAssumption");
 const closeBtn = overlay.querySelector(".close-btn");
+const assumptionBoxes = document.querySelectorAll(".assumption-box");
 
 openBtn.addEventListener("click", () => {
   overlay.classList.add("show");
@@ -782,6 +817,33 @@ rubyToUseModalOverlay.addEventListener("click", (e) => {
   }
 });
 
+// 페이지에 있는 모든 설명창(.assumption-box)을 선택합니다.
+const allAssumptionBoxes = document.querySelectorAll('.assumption-box');
+
+// 선택된 모든 설명창에 대해 각각 클릭 이벤트를 추가합니다.
+allAssumptionBoxes.forEach(box => {
+  box.addEventListener('click', function(event) {
+    
+    // 1. 모바일 화면인지 확인합니다 (화면 너비 480px 이하)
+    if (window.innerWidth <= 480) {
+      
+      // 2. 만약 클릭한 대상이 닫기(X) 버튼이라면,
+      //    중복 실행을 막기 위해 여기서 함수를 종료합니다.
+      if (event.target.closest('.close-btn')) {
+        return;
+      }
+      
+      // 3. 클릭된 설명창의 부모 .overlay를 찾습니다.
+      const parentOverlay = this.closest('.overlay');
+      
+      // 4. 부모 overlay를 찾았다면, 'show' 클래스를 제거하여 창을 닫습니다.
+      if (parentOverlay) {
+        parentOverlay.classList.remove("show");
+      }
+    }
+  });
+});
+
   // 숫자 입력이 8 이상이면 자동으로 7로 변경
 function enforceMaxValue(id, max) {
   const input = document.getElementById(id);
@@ -826,7 +888,22 @@ senaPassCheckbox.addEventListener('change', function() {
   }
 });
 
+// --- 최대값 입력 버튼 기능 스크립트 ---
+  const maxButtons = document.querySelectorAll('.max-btn');
+
+  maxButtons.forEach(button => {
+    button.addEventListener('click', function() {
+      // 1. 버튼의 'data-target' 속성에서 연결된 input의 id를 가져옵니다.
+      const targetId = this.dataset.target;
+      const targetInput = document.getElementById(targetId);
+
+      // 2. 해당 input을 찾아서 그 input의 'max' 속성값을 'value'에 넣어줍니다.
+      if (targetInput) {
+        targetInput.value = targetInput.max;
+      }
+    });
+  });
+
 </script>
 </body>
 </html>
-
