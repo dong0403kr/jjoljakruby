@@ -1,22 +1,19 @@
 <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <!-- Gem Background and Facets -->
-    <path d="M7.11051 3.00001L3 7.11052V24.8895L7.11051 29H24.8895L29 24.8895V7.11052L24.8895 3.00001H7.11051Z" fill="#D81E3F"/>
-    <path d="M7.11051 3.00001L3 7.11052V24.8895L7.11051 29H24.8895L29 24.8895V7.11052L24.8895 3.00001H7.11051Z" stroke="#2E040C" stroke-width="2" stroke-linejoin="round"/>
-    <path d="M3 7L16 16L29 7" stroke="#FF5C7A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-    <path d="M7 3L16 16L7 29" stroke="#FF5C7A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-    <path d="M25 3L16 16L25 29" stroke="#FF5C7A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-    <path d="M3 25L16 16L29 25" stroke="#FF5C7A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-    
+    <!-- Gem Background (Fills the entire square) -->
+    <rect width="32" height="32" rx="4" ry="4" fill="#D81E3F"/>
+    <path d="M0 4C0 1.79086 1.79086 0 4 0H28C30.2091 0 32 1.79086 32 4V28C32 30.2091 30.2091 32 28 32H4C1.79086 32 0 30.2091 0 28V4Z" stroke="#2E040C" stroke-width="2"/>
+
     <!-- Calculator Screen -->
-    <rect x="7" y="7" width="18" height="7" fill="#B4E3C5" rx="1" ry="1"/>
-    <rect x="7.5" y="7.5" width="17" height="6" stroke="#2E040C" stroke-width="1" rx="0.5" ry="0.5"/>
+    <rect x="6" y="6" width="20" height="8" fill="#B4E3C5" rx="2" ry="2"/>
+    <rect x="6.5" y="6.5" width="19" height="7" stroke="#2E040C" stroke-width="1" rx="1.5" ry="1.5"/>
 
     <!-- Calculator Buttons -->
-    <rect x="8" y="16" width="4" height="4" fill="#5A5A5A" rx="1" ry="1"/>
-    <rect x="14" y="16" width="4" height="4" fill="#5A5A5A" rx="1" ry="1"/>
-    <rect x="20" y="16" width="4" height="4" fill="#F08A24" rx="1" ry="1"/>
+    <rect x="5" y="16" width="6" height="5" fill="#5A5A5A" rx="1" ry="1"/>
+    <rect x="13" y="16" width="6" height="5" fill="#5A5A5A" rx="1" ry="1"/>
+    <rect x="21" y="16" width="6" height="5" fill="#F08A24" rx="1" ry="1"/>
     
-    <rect x="8" y="22" width="4" height="4" fill="#5A5A5A" rx="1" ry="1"/>
-    <rect x="14" y="22" width="4" height="4" fill="#5A5A5A" rx="1" ry="1"/>
-    <rect x="20" y="22" width="4" height="4" fill="#5A5A5A" rx="1" ry="1"/>
+    <rect x="5" y="23" width="6" height="5" fill="#5A5A5A" rx="1" ry="1"/>
+    <rect x="13" y="23" width="6" height="5" fill="#5A5A5A" rx="1" ry="1"/>
+    <rect x="21" y="23" width="6" height="5" fill="#5A5A5A" rx="1" ry="1"/>
 </svg>
+
