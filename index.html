@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>쫄작 계산기</title>
+  <link rel="icon" href="image/favicon.svg" type="image/svg+xml">
   <style>
     @font-face {
     font-family: 'Gyeonggi_Title_Medium';
@@ -12,7 +13,7 @@
     font-style: normal;
 }
 
-    body {
+    body { 
       font-family: Arial, sans-serif;
       max-width: 600px;
       padding : 15px;
@@ -587,13 +588,13 @@
   </div>
 
   <div class="section" id="raidSection" style="display: flex; gap: 10px;">
-      <h3 class="raidTitle">하루 레이드<span class="mobile-br"><br></span>판 수</h3>
+      <h3 class="raidTitle">하루 레이드<span class="mobile-br"><br></span> 판 수</h3>
      <div class="input-wrapper"> 
       <label for="raidCount">
         <input type="number" id="raidCount" min="0" placeholder="미 입력 시 0">
-        <label class="checkbox-label"><input type="checkbox" id="raidOver11Level" checked> 11단계 이상</label>
+        <label class="checkbox-label"><input type="checkbox" id="raidOver11Level" checked>11단계 이상</label>
       </label>
-      <div id="raidTooltip" class="tooltip-bubble">레이드에 필요한 열쇠가 부족합니다!</div>
+      <div id="raidTooltip" class="tooltip-bubble">레이드에 소모되는 열쇠가 너무 많음!</div>
     </div>
   </div>
 
