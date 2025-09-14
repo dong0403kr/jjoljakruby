@@ -245,13 +245,13 @@
     display: none;
   }
 
-  #openSubModal, #openSenaPassModal, #openRubyToUseModal {
+  #openSubModal, #openSenaPassModal, #openRubyToUseModal, #openMedalModal {
     cursor: pointer;
     color: #333;
     transition: color 0.15s ease-in-out;
   }
 
-  #openSubModal:hover, #openSenaPassModal:hover, #openRubyToUseModal:hover {
+  #openSubModal:hover, #openSenaPassModal:hover, #openRubyToUseModal:hover, #openMedalModal:hover {
     cursor: pointer;
     color:#e06040
   }
@@ -279,15 +279,27 @@
     touch-action: manipulation;
   }
 
+  .btn90, .btn120{
+    background-color: #ffffff;
+    border: 1px solid #333;
+    margin-top: 0;
+    margin-left: 0px;
+    font-size: auto;
+    padding: 7px;
+    color: #333;
+    transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out;
+    touch-action: manipulation;
+  }
+
   /* 모바일 터치 및 데스크탑 클릭 피드백 */
-  .max-btn:active {
+  .max-btn:active, .btn90:active, .btn120:active {
     background-color: #999;
     color: #ffffff;
   }
 
   /* 데스크탑 마우스 호버 전용 효과 */
   @media (hover: hover) {
-    .max-btn:hover {
+    .max-btn:hover, .btn90:hover, .btn120:hover {
       background-color: #999;
       color: #ffffff;
     }
@@ -356,6 +368,12 @@
   #raidSection {
     margin-top: 13px;
   }
+
+  #medalCount {
+    width: 100px
+  }
+
+
     @media (max-width: 480px) {
       .rubyuseTitle {
         line-height: 24px;
@@ -611,6 +629,35 @@
     </label>
   </div>
 
+  <div class="section" style="display: flex; gap: 20px;">
+    <h3 id="openMedalModal">시련의 탑 메달</h3>
+    <label for="medalCount">
+      <button class="btn90" data-target="medalCount">90개</button>
+      <button class="btn120" data-target="medalCount">120개</button>
+      <input type="number" id="medalCount" min="0" max="120" placeholder="미 입력 시 0">
+    </label>
+  </div>
+
+  <div id="medalOverlay" class="overlay">
+    <div class="assumption-box">
+      <span class="close-btn" onclick="closeMedalModal()">&times;</span>
+      <h3>시련의 탑 메달 별 루비 보상</h3>
+      <ul>
+        <li>4주마다 초기화 되기 때문에 2주는 절반으로 반영</li>
+        <li>10~19개 : 100루비</li>
+        <li>20~29개 : 200루비</li>
+        <li>30~39개 : 300루비</li>
+        <li>40~49개 : 400루비</li>
+        <li>50~69개 : 500루비</li>
+        <li>70~79개 : 600루비</li>
+        <li>80~99개 : 700루비</li>
+        <li>100~109개 : 1000루비</li>
+        <li>110~120개 : 1500루비</li>
+      </ul>
+      </ul><div class="credit"></div>
+    </div>
+  </div>
+
 <div class="section" style="display: flex; gap: 20px;">
   <h3>쫄작원정대 열쇠 포함</h3>
   <label class="checkbox-label"><input type="checkbox" id="includeExpeditionKey" checked> 포함하여 계산</label>
@@ -683,6 +730,7 @@
   document.getElementById("raidCount").value = "";
   document.getElementById("keyBoxCount").value = "";
   document.getElementById("rubyToUse").value = "";
+  document.getElementById("medalCount").value = "";
 
   // 결과창 초기화
   document.getElementById("profit2w").innerText = "0";
@@ -710,6 +758,7 @@ function calculateProfit() {
   const conquestTier = document.getElementById("conquestTier").value;
   const includeExpeditionKey = document.getElementById("includeExpeditionKey").checked;
   const rubyToUse = parseInt(document.getElementById("rubyToUse").value) || 0;
+  const medalCount = parseInt(document.getElementById("medalCount").value) || 0;
 
   function getKeyBoxRubyCostPerDay(rubyTier, boxCount) {
     let cost = 0;
@@ -727,6 +776,19 @@ function calculateProfit() {
     if (tier === "rare") return 3400 * (weeks / 2);
     if (tier === "advanced") return 1400 * (weeks / 2);
     if (tier === "common") return 200 * (weeks / 2);
+    return 0;
+  }
+
+  function towerOfTrialRuby(medal) {
+    if (medal >= 10 && medal < 20) return 100;
+    if (medal >= 20 && medal < 30) return 200;
+    if (medal >= 30 && medal < 40) return 300;
+    if (medal >= 40 && medal < 50) return 400;
+    if (medal >= 50 && medal < 70) return 500;
+    if (medal >= 70 && medal < 80) return 600;
+    if (medal >= 80 && medal < 100) return 700;
+    if (medal >= 100 && medal < 110) return 1000;
+    if (medal >= 110) return 1500;
     return 0;
   }
 
@@ -796,9 +858,10 @@ function calculateProfit() {
   const rubyFromFreeShop = 30 * days;
   const rubyFromWeekend = 100 * weeks;
   const rubyFromConquest = getConquestRuby(conquestTier, weeks);
+  const rubyFromTrial = (period === 2 ? (towerOfTrialRuby(medalCount) / 2) : towerOfTrialRuby(medalCount));
 
   const totalRubyIncome = rubyFromCholjak + rubyFromRubySub + rubyFromKeySubBonus +
-    rubyFromSenaPass + rubyFromDailyQuest + rubyFrom300Attendance + rubyFromFreeShop + rubyFromWeekend + rubyFromConquest;
+    rubyFromSenaPass + rubyFromDailyQuest + rubyFrom300Attendance + rubyFromFreeShop + rubyFromWeekend + rubyFromConquest + rubyFromTrial;
 
   // 🔹 루비 지출
   const rubySpentPerDay = getKeyBoxRubyCostPerDay(keyBoxRuby,keyBoxCount);
@@ -940,6 +1003,24 @@ rubyToUseModalOverlay.addEventListener("click", (e) => {
   }
 });
 
+// 시련의 탑 메달 설명
+const medalModalOverlay = document.getElementById('medalOverlay');
+const openMedalModalBtn = document.getElementById('openMedalModal');
+
+openMedalModalBtn.addEventListener("click", () => {
+  medalModalOverlay.classList.add("show");
+});
+
+function closeMedalModal() {
+  medalModalOverlay.classList.remove("show");
+}
+
+medalModalOverlay.addEventListener("click", (e) => {
+  if (e.target === medalModalOverlay) {
+    medalModalOverlay.classList.remove("show");
+  }
+});
+
 // 페이지에 있는 모든 설명창(.assumption-box)을 선택합니다.
 const allAssumptionBoxes = document.querySelectorAll('.assumption-box');
 
@@ -983,6 +1064,7 @@ enforceMaxValue("honorKeyCount", 7);
 enforceMaxValue("guildKeyCount", 7);
 enforceMaxValue("arenaKeyCount", 7);
 enforceMaxValue("keyBoxCount", 50);
+enforceMaxValue("medalCount", 120);
 
 const selectBox = document.getElementById('keyBoxRuby');
 const keyBoxCountContainer = document.getElementById('keyBoxCount_container');
@@ -1029,6 +1111,28 @@ senaPassCheckbox.addEventListener('change', function() {
       }
     });
   });
+
+  // 필요한 HTML 요소들을 ID와 클래스 이름으로 선택합니다.
+            const medalCountInput = document.getElementById('medalCount');
+            const btn90 = document.querySelector('.btn90');
+            const btn120 = document.querySelector('.btn120');
+
+            // '90개' 버튼에 클릭 이벤트 리스너를 추가합니다.
+            btn90.addEventListener('click', (event) => {
+                // 버튼의 기본 동작(예: form 안에 있을 경우 form 제출)을 막습니다.
+                event.preventDefault(); 
+                // 입력 칸의 값을 90으로 설정합니다.
+                medalCountInput.value = 90;
+            });
+
+            // '120개' 버튼에 클릭 이벤트 리스너를 추가합니다.
+            btn120.addEventListener('click', (event) => {
+                // 버튼의 기본 동작을 막습니다.
+                event.preventDefault();
+                // 입력 칸의 값을 120으로 설정합니다.
+                medalCountInput.value = 120;
+            });
+
 
 // 툴팁 자체에 클릭 이벤트 리스너를 추가합니다.
 raidTooltip.addEventListener('click', function() {
