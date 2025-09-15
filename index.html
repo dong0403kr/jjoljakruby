@@ -1,471 +1,240 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>쫄작 계산기</title>
-  <link rel="icon" href="image/favicon.svg" type="image/svg+xml">
-  <style>
-    @font-face {
-    font-family: 'Gyeonggi_Title_Medium';
-    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/2410-3@1.0/Title_Medium.woff') format('woff');
-    font-weight: 300;
-    font-style: normal;
-}
-
-    body { 
-      font-family: Arial, sans-serif;
-      max-width: 600px;
-      padding : 15px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-
-    label, h3, h4, h1, ul, select, input[type="checkbox"] {
-      -webkit-user-select: none; /* Safari */
-      -moz-user-select: none;    /* Firefox */
-      -ms-user-select: none;     /* IE/Edge */
-      user-select: none;         /* 표준 */
-    }
-
-    h1, h3, h4 {
-      font-family: 'Gyeonggi_Title_Medium';
-      color: #333;
-    }
-
-    .section {
-      margin-bottom: 0px;
-    }
-
-    label {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin: 1px 0;
-    }
-
-    label[for="checkboxlabel"] {
-      cursor: pointer;
-    }
-
-    input[type="number"],
-    select {
-      flex: 1;
-      padding: 6px;
-      margin-left: 0px;
-      cursor: pointer;
-    }
-    
-    input[type="number"] {
-      cursor:text;
-    }
-
-    input[type="checkbox"] {
-      margin-right: 10px;
-      cursor: pointer;
-    }
-
-    button {
-      font-family: 'Gyeonggi_Title_Medium';
-      padding: 10px 20px;
-      font-size: 16px;
-      margin-top: 10px;
-      background-color: #4CAF50;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-
-    #calculateBtn {
-      margin-top: 20px;
-    }
-
-    /* 모바일 터치 및 데스크탑 클릭 피드백 */
-  button:active {
-    background-color: #45a049;
-  }
-  /* 데스크탑 마우스 호버 전용 효과 */
-  @media (hover: hover) {
-    button:hover {
-      background-color: #45a049;
-    }
-  }
-    .resetbutton {
-      background-color: #ccc; 
-      color: #333;
-    }
-    
-    .resetbutton:active {
-    background-color: #b4b4b4; 
-  }
-  @media (hover: hover) {
-    .resetbutton:hover {
-      background-color: #b4b4b4; 
-    }
-  }
-
-    .checkbox-row {
-      display: flex;
-      flex-wrap: nowrap;
-      gap: 20px;
-      flex-direction: row;
-    }
-
-    .overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0,0,0,0.4);
-  display: none;
-  justify-content: center;
-  align-items: center;
-  animation: fadeOut 0.2s ease forwards;
-  z-index: 1000;
-}
-
-.overlay.show {
-  display: flex;
-  animation: fadeIn 0.2s ease forwards;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to   { opacity: 1; }
-}
-@keyframes fadeOut {
-  from { opacity: 1; }
-  to   { opacity: 0; }
-}
-
-.assumption-box {
-  background-color: #fff;
-  padding: 20px;
-  border-radius: 10px;
-  max-width: 400px;
-  width: 90%;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-  position: relative;
-  animation: fadeIn 0.2s ease forwards;
-}
-
-.assumption-box h3 {
-  margin-top: 0;
-}
-
-.assumption-box ul {
-  padding-left: 20px;
-}
-
-.close-btn {
-  position: absolute;
-  top: 10px;
-  right: 15px;
-  font-size: 20px;
-  cursor: pointer;
-}
-
-.title-wrapper {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: nowrap;
-  gap: 10px;
-  padding: 15px 60px;
-  white-space: nowrap;
-  overflow: hidden;
-}
-
-.title-wrapper h1 {
-  font-size: clamp(38px, 5vw, 40px); /* 화면 크기에 따라 자동 조절 */
-  margin-bottom: 10px;
-  flex-shrink: 1;
-  text-overflow: ellipsis;
-  overflow: hidden;
-  white-space: nowrap;
-}
-
-.assumption-button {
-  background-color: #777;
-  transition: background-color 0.15s ease-in-out;
-  font-size: 14px;
-  padding: 7px 10px;
-  white-space: nowrap;
-  max-width: 120px;
-  min-width: 80px;
-  width: auto;
-  flex-shrink: 0;
-  margin-top: 10px;
-}
-
-
-
-.assumption-box .credit {
-  position: absolute;
-  bottom: 10px;
-  right: 10px;
-  font-size: 13px;
-  color: #b6b6b69a;
-}
-
-.assumption-button:active {
-    background-color: #e06040;
-  }
-  
-  @media (hover: hover) {
-    .assumption-button:hover {
-      background-color: #e06040;
-    }
-  }
-
-    .checkbox-label {
-      cursor: pointer;
-    }
-
-    #raidOver11Level {
-      margin-left: 15px;
-    }
-    .button-column {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-top: 10px;
-  align-items: flex-start; /* 왼쪽 정렬 (원하면 center로 변경 가능) */
-}
-
-/* 입력 상자를 감싸는 컨테이너를 기본적으로 숨김 */
-        #keyBoxCount_container {
-            display: none;
-            margin-left: 10px;
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>쫄작 계산기</title>
+    <link rel="icon" href="image/favicon.svg" type="image/svg+xml">
+    <style>
+        @font-face {
+            font-family: 'GyeonggiMillenniumTitle';
+            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2410-3@1.0/Title_Light.woff') format('woff');
+            font-weight: 300;
+            font-display: swap;
+        }
+        @font-face {
+            font-family: 'Gyeonggi_Title_Medium';
+            src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/2410-3@1.0/Title_Medium.woff') format('woff');
+            font-weight: 300;
+            font-style: normal;
         }
 
-        #premiumOption {
-    display: none;
-  }
+        html {
+            background-color: #2c2f33;
+        }
+        body { 
+            font-family: 'GyeonggiMillenniumTitle';
+            background-color: #40444b;
+            color: #ffffff;
+            max-width: 600px;
+            padding : 15px;
+            margin-left: auto;
+            margin-right: auto;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+        }
 
-  #openSubModal, #openSenaPassModal, #openRubyToUseModal, #openMedalModal {
-    cursor: pointer;
-    color: #333;
-    transition: color 0.15s ease-in-out;
-  }
+        label, h3, h4, h1, ul, select, input[type="checkbox"] {
+            -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none;
+        }
 
-  #openSubModal:hover, #openSenaPassModal:hover, #openRubyToUseModal:hover, #openMedalModal:hover {
-    cursor: pointer;
-    color:#e06040
-  }
+        h1, h3, h4 {
+            font-family: 'Gyeonggi_Title_Medium';
+            color: #7289da;
+        }
 
-.mobile-break {
-  display: inline;
-}
-.mobile-br {
-    display: none;
-  }
+        h1{
+          margin-top: 0;
+        }
+        .section { margin-bottom: 0px; }
+        label { display: flex; align-items: center; justify-content: flex-start; margin: 5px 0; color: #bdc3c7; }
+        label[for="checkboxlabel"] { cursor: pointer; }
 
-  .credit::after {
-    content: '최종 수정일 2025.09.15';
-  }
+        input[type="number"],
+        select {
+            flex: 1; padding: 8px; margin-left: 10px; cursor: pointer;
+            background-color: #2c2f33; color: #ffffff;
+            border: 1px solid #545861; border-radius: 5px;
+        }
+        
+        input[type="number"] { cursor:text; }
+        input[type="checkbox"] { margin-right: 10px; cursor: pointer; transform: scale(1.2); }
 
-  .max-btn{
-    background-color: #ffffff;
-    border: 1px solid #333;
-    margin-top: 0;
-    margin-left: 10px;
-    font-size: auto;
-    padding: 7px;
-    color: #333;
-    transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out;
-    touch-action: manipulation;
-  }
+        /* [수정] 기본 버튼 스타일 */
+        button {
+            font-family: 'GyeonggiMillenniumTitle'; padding: 10px 20px; font-size: 16px;
+            margin-top: 10px; background-color: #4caf50; color: white;
+            border: none; border-radius: 4px; cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+        button:active { background-color: #3b883e; }
+        @media (hover: hover) { button:hover { background-color: #3b883e; } }
+        
+        /* [수정] 초기화 버튼 스타일 */
+        .resetbutton { background-color: #99aab5; color: #2c2f33; }
+        .resetbutton:active { background-color: #8a9aaf; }
+        @media (hover: hover) { .resetbutton:hover { background-color: #8a9aaf; } }
 
-  .btn90, .btn120{
-    background-color: #ffffff;
-    border: 1px solid #333;
-    width:auto;
-    margin-top: 0;
-    margin-left: 0px;
-    font-size: auto;
-    padding: 7px;
-    color: #333;
-    transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out;
-    touch-action: manipulation;
-  }
+        .checkbox-row { display: flex; flex-wrap: nowrap; gap: 20px; flex-direction: row; }
+        
+        .overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.6); display: none;
+            justify-content: center; align-items: center;
+            animation: fadeOut 0.2s ease forwards; z-index: 1000;
+        }
+        .overlay.show { display: flex; animation: fadeIn 0.2s ease forwards; }
 
-  /* 모바일 터치 및 데스크탑 클릭 피드백 */
-  .max-btn:active, .btn90:active, .btn120:active {
-    background-color: #999;
-    color: #ffffff;
-  }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
 
-  /* 데스크탑 마우스 호버 전용 효과 */
-  @media (hover: hover) {
-    .max-btn:hover, .btn90:hover, .btn120:hover {
-      background-color: #999;
-      color: #ffffff;
-    }
-  }
+        .assumption-box {
+            background-color: #40444b; padding: 25px; border-radius: 10px;
+            max-width: 400px; width: 90%;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+            position: relative; animation: fadeIn 0.2s ease forwards;
+        }
+        .assumption-box h3 { margin-top: 0; }
+        .assumption-box ul { padding-left: 20px; }
+        .close-btn { position: absolute; top: 10px; right: 15px; font-size: 24px; cursor: pointer; color: #99aab5; }
+        
+        .title-wrapper {
+            display: flex; align-items: center; justify-content: space-between;
+            flex-wrap: nowrap; gap: 10px; padding: 0; white-space: nowrap;
+            overflow: hidden; border-bottom: 1px solid #545861;
+            padding-bottom: 15px; margin-bottom: 15px;
+        }
+        .title-wrapper h1 {
+            font-size: clamp(32px, 5vw, 36px); margin-bottom: 0; flex-shrink: 1;
+            text-overflow: ellipsis; overflow: hidden; white-space: nowrap;
+        }
 
-  .input-wrapper {
-    position: relative;
-    display: inline-block;
-    align-self: center;
-  }
-  .tooltip-bubble {
-    visibility: hidden;
-    opacity: 0;
-    transition: opacity 0.2s ease, visibility 0.2s ease;
-    position: absolute;
-    top: 105%;
-    left: 30%;
-    transform: translateX(-50%);
-    background-color: #e06040;
-    color: #fff;
-    padding: 4px 7px;
-    border-radius: 6px;
-    font-size: 14px;
-    white-space: nowrap;
-    z-index: 10;
-    cursor: pointer;
-    -webkit-user-select: none; /* Safari */
-    -moz-user-select: none;    /* Firefox */
-    -ms-user-select: none;     /* IE/Edge */
-    user-select: none;         /* 표준 */
-  }
-  .tooltip-bubble::after {
-    content: '';
-    position: absolute;
-    bottom: 96%;
-    left: 50%;
-    margin-left: -5px;
-    border-width: 5px;
-    border-style: solid;
-    border-color: transparent transparent #e06040 transparent;
-  }
-  .tooltip-bubble.visible {
-    visibility: visible;
-    opacity: 1;
-  }
+        /* [수정] 전제조건 버튼 스타일 */
+        .assumption-button {
+            background-color: #36393f; transition: background-color 0.15s ease-in-out;
+            font-size: 14px; padding: 8px 12px; white-space: nowrap;
+            max-width: 120px; min-width: 80px; width: auto;
+            flex-shrink: 0; margin-top: 0;
+        }
+        .assumption-button:active { background-color: #e06040; }
+        @media (hover: hover) { .assumption-button:hover { background-color: #e06040; } }
+        
+        .assumption-box .credit { position: absolute; bottom: 10px; right: 15px; font-size: 13px; color: #7f8c8d; }
 
-  h3 {
-    margin-top: 15px;
-    margin-bottom: 15px;
-  }
-  h4 {
-    margin-top: 15px;
-    margin-bottom: 15px;
-  }
+        .checkbox-label { cursor: pointer; }
+        #raidOver11Level { margin-left: 15px; }
+        .button-column { display: flex; flex-direction: column; gap: 10px; margin-top: 0; align-items: flex-start; }
+        #keyBoxCount_container { display: none; margin-left: 10px; }
+        #premiumOption { display: none; }
+        
+        #openSubModal, #openSenaPassModal, #openRubyToUseModal, #openMedalModal {
+            cursor: pointer; color: #7289da; transition: color 0.15s ease-in-out;
+        }
+        #openSubModal:hover, #openSenaPassModal:hover, #openRubyToUseModal:hover, #openMedalModal:hover { color:#e06040 }
+        
+        .mobile-break { display: inline; }
+        .mobile-br { display: none; }
 
-  .rubyuseTitle{
-    margin-top: 15px;
-    margin-bottom: 15px;
-  }
+        .credit::after { content: '최종 수정일 2025.09.15'; }
 
-  .raidTitle{
-    margin-top: 15px;
-    margin-bottom:15px;
-  }
+        /* [수정] 최대/90/120 버튼 스타일 */
+        .max-btn, .btn90, .btn120 {
+            background-color: #36393f; border: 1px solid #99aab5; margin-top: 0;
+            margin-left: 10px; padding: 6px 8px; color: #ffffff;
+            transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out;
+            touch-action: manipulation;
+        }
+        .btn90, .btn120 { margin-left: 5px; }
+        .max-btn:active, .btn90:active, .btn120:active { background-color: #99aab5; color: #2c2f33; }
+        @media (hover: hover) {
+            .max-btn:hover, .btn90:hover, .btn120:hover {
+                background-color: #99aab5; color: #2c2f33;
+            }
+        }
+        
+        .input-wrapper { position: relative; display: inline-block; align-self: center; }
+        .tooltip-bubble {
+            visibility: hidden; opacity: 0; transition: opacity 0.2s ease, visibility 0.2s ease;
+            position: absolute; top: 105%; left: 30%; transform: translateX(-50%);
+            background-color: #e06040; color: #fff; padding: 4px 7px; border-radius: 6px;
+            font-size: 14px; white-space: nowrap; z-index: 10; cursor: pointer;
+            -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none;
+        }
+        .tooltip-bubble::after {
+            content: ''; position: absolute; bottom: 96%; left: 50%;
+            margin-left: -5px; border-width: 5px; border-style: solid;
+            border-color: transparent transparent #e06040 transparent;
+        }
+        .tooltip-bubble.visible { visibility: visible; opacity: 1; }
 
-  #raidSection {
-    margin-top: 13px;
-  }
+        h3 { margin-top: 15px; margin-bottom: 15px; }
+        h4 { margin-top: 15px; margin-bottom: 15px; }
 
-  #medalCount {
-    width: 100px;
-    margin-left: 0;
-  }
+        .rubyuseTitle, .raidTitle { margin-right: 5px; }
+        li { line-height: 24px; }
+        
+        #profit2w, #profit4w, #avgProfit, #heroCount, #avgHeroCount, #accessoryDays { color: #f1c40f; }
 
+        #arenaKeyCount, #honorKeyCount, #guildKeyCount {
+            flex: none; /* 남는 공간을 차지하지 않도록 설정 */
+            width: 100px;
+            margin-left: 0;
+        }
 
-    @media (max-width: 480px) {
-      .rubyuseTitle {
-        line-height: 24px;
-        margin-top: 12px;
-        margin-bottom: 12px;
-      }
+        #medalCount {
+          width: 100px;
+          margin-top: 1px;
+        }
+        
+        #raidCount {
+          margin-left:0;
+        }
 
-      label {
-        flex-direction: nowrap;
-        align-items: center;
-        vertical-align: middle;
-      }
+        #rubyToUse {
+          margin-left:0;
+        }
 
-      input[type="number"],
-      select {
-        margin-left: 5px;
-        width: 100%;
-        align-self: center;
-      }
+        #calculateBtn, #resetbutton {
+          margin-top: 20px;
+        }
 
-      #arenaKeyCount, #guildKeyCount, #honorKeyCount{
-        margin-left: 0px;
-        width: 100%;
-        margin-top:0px;
-      }
+        #resultH34 {
+          font-family: 'GyeonggiMillenniumTitle';
+          color:#e8e9e9;
+        }
 
-      #raidCount{
-        width: 80px;
-        margin-top: 0;
-      }
-
-      .raidTitle{
-        line-height: 24px;
-        margin-top: 12px;
-        margin-bottom: 12px;
-      }
-
-      #raidSection {
-        margin-top: 10px;
-      }
-
-      button {
-        width: 100%;
-      }
-
-      .max-btn {
-        width: auto;
-        margin-left: 4px;
-      }
-      .title-wrapper {
-        padding: 8px 25px;
-        line-height: 40px;
-        margin-left: 8%;
-        margin-top: -2%;
-        letter-spacing: 0.25em;
-      }
-      .checkbox-row {
-        flex-direction: nowrap; /* 세로 배열로 전환 */
-        gap: 10px;
-      }
-      .mobile-break {
-    display: none;
-  }
-  .mobile-br {
-    display: inline;
-  }
-
-  .credit::after {
-    content: '모바일은 터치로 팝업을 끌 수 있음 | 최종 수정일 2025.09.15';
-  }
-  .close-btn {
-      /* 터치 영역을 넓히기 위해 패딩 추가 */
-      padding: 15px;
-      top: 0;
-      right: 0;
-    }
-    .modal-scroll-content {
-      max-height: 85vh; /* 화면 높이의 85%를 넘지 않도록 설정 */
-      overflow-y: auto; /* 내용이 길어지면 스크롤 생성 */
-    }
-    #conquestSection {
-      margin-top: -5px;
-    }
-    }
+        #maintitle {
+          margin-left : 20px;
+        }
+        @media (max-width: 480px) {
+            body { max-width: 100%; border-radius: 0; }
+            .title-wrapper {
+              padding: 8px 25px;
+              line-height: 40px;
+              letter-spacing: 0.25em;
+            }
+            .mobile-break { display: none; }
+            .mobile-br { display: inline; }
+            
+            label { flex-direction: row; align-items: center; }
+            input[type="number"], select { margin-left: 10px; width: auto; flex: 1; }
+            #raidCount { width: 75px; }
+            #medalCount {width: 75px;}
+            button { width: 100%; }
+            .max-btn, .btn90, .btn120, .assumption-button { width: auto; }
+            
+            .credit::after { content: '모바일은 터치로 팝업을 끌 수 있음 | 최종 수정일 2025.09.15'; }
+            .close-btn { padding: 15px; top: 0; right: 0; }
+            .modal-scroll-content { max-height: 85vh; overflow-y: auto; }
+            body.modal-open { overflow: hidden; }
+            #maintitle { margin-left: 40px;}
+        }
   </style>
 </head>
 <body>
 
   <div class="title-wrapper">
-    <h1>세나리 <span class="mobile-break">쫄작</span> <span class="mobile-br"><br></span> 계산기</h1>
+    <h1 id="maintitle">세나리 <span class="mobile-break">쫄작</span> <span class="mobile-br"><br></span> 계산기</h1>
     <div class="button-column">
       <button id="showAssumption" class="assumption-button">전제조건</button>
       <button id="showIncludedItems" class="assumption-button">계산 포함 항목</button>
@@ -591,19 +360,19 @@
     <label for="arenaKeyCount">
       ⚔️결투장상점 구매 횟수:
       <button class="max-btn" data-target="arenaKeyCount">최대</button>
-      <input type="number" id="arenaKeyCount" min="0" max="7" placeholder="최대 7, 미 입력 시 0">
+      <input type="number" id="arenaKeyCount" min="0" max="7" placeholder="미 입력 시 0">
     </label>
 
     <label for="honorKeyCount">
       🏵️명예상점 구매 횟수:
       <button class="max-btn" data-target="honorKeyCount">최대</button>
-      <input type="number" id="honorKeyCount" min="0" max="7" placeholder="최대 7, 미 입력 시 0">
+      <input type="number" id="honorKeyCount" min="0" max="7" placeholder="미 입력 시 0">
     </label>
 
     <label for="guildKeyCount">
       🏅길드상점 구매 횟수:
       <button class="max-btn" data-target="guildKeyCount">최대</button>
-      <input type="number" id="guildKeyCount" min="0" max="7" placeholder="최대 7, 미 입력 시 0">
+      <input type="number" id="guildKeyCount" min="0" max="7" placeholder="미 입력 시 0">
     </label>
   </div>
 
@@ -631,7 +400,7 @@
     </label>
   </div>
 
-  <div class="section" style="display: flex; gap: 20px;">
+  <div class="section" style="display: flex; gap: 10px;">
     <h3 id="openMedalModal">시련의 탑 메달</h3>
     <label for="medalCount">
       <button class="btn90" data-target="medalCount">90개</button>
@@ -696,12 +465,12 @@
   <div class="section">
     <button id="calculateBtn" onclick="calculateProfit()">💰 루비 순이익 계산하기</button>
     <button onclick="resetForm()" class="resetbutton">🔄 초기화</button>
-    <h3>📆 2주간 루비 순이익: <span id="profit2w">0</span> 루비</h3>
-    <h3>📆 4주간 루비 순이익: <span id="profit4w">0</span> 루비</h3>
-    <h3>♦️ 일평균 루비 순이익: <span id="avgProfit">0</span> 루비</h3>
-    <h4>👥 2주간 만렙찍는 쫄 수: <span id="heroCount">0</span> 마리</h3>
-    <h4>📊 하루 평균 만렙찍는 쫄 수: <span id="avgHeroCount">0</span> 마리</h3>
-    <h4>💍 악몽 전설 장신구 천장 소요 기간 : <span id="accessoryDays">0</span> 일</h3>
+    <h3 id="resultH34">📆 2주간 루비 순이익: <span id="profit2w">0</span> 루비</h3>
+    <h3 id="resultH34">📆 4주간 루비 순이익: <span id="profit4w">0</span> 루비</h3>
+    <h3 id="resultH34">♦️ 일평균 루비 순이익: <span id="avgProfit">0</span> 루비</h3>
+    <h4 id="resultH34">👥 2주간 만렙찍는 쫄 수: <span id="heroCount">0</span> 마리</h3>
+    <h4 id="resultH34">📊 하루 평균 만렙찍는 쫄 수: <span id="avgHeroCount">0</span> 마리</h3>
+    <h4 id="resultH34">💍 악몽 전설 장신구 천장 소요 기간 : <span id="accessoryDays">0</span> 일</h3>
   </div>
 <script>
   const raidTooltip = document.getElementById("raidTooltip");
@@ -913,6 +682,20 @@ console.log("2주 동안 사용되는 쫄:", heroCount);
       : avgHero.toFixed(1);
 }
 
+function openModal(overlayElement) {
+    if (overlayElement) {
+        overlayElement.classList.add('show');
+        document.body.classList.add('modal-open');
+    }
+}
+
+function closeModal(overlayElement) {
+    if (overlayElement) {
+        overlayElement.classList.remove('show');
+        document.body.classList.remove('modal-open');
+    }
+}
+
 // 전제조건 안내 토글
 const overlay = document.getElementById("assumptionOverlay");
 const openBtn = document.getElementById("showAssumption");
@@ -920,34 +703,34 @@ const closeBtn = overlay.querySelector(".close-btn");
 const assumptionBoxes = document.querySelectorAll(".assumption-box");
 
 openBtn.addEventListener("click", () => {
-  overlay.classList.add("show");
+  openModal(overlay);
 });
 
 closeBtn.addEventListener("click", () => {
-  overlay.classList.remove("show");
+  closeModal(overlay);
 });
 
 // 바깥 영역 클릭 시 닫기
 overlay.addEventListener("click", (e) => {
   if (e.target === overlay) {
-    overlay.classList.remove("show");
-  }
+        closeModal(overlay);
+    }
 });
 
 const includedItemsOverlay = document.getElementById("includedItemsOverlay");
   const showIncludedItemsBtn = document.getElementById("showIncludedItems");
 
   showIncludedItemsBtn.addEventListener("click", () => {
-    includedItemsOverlay.classList.add("show");
+    openModal(includedItemsOverlay);
   });
 
   function closeIncludedItems() {
-    includedItemsOverlay.classList.remove("show");
+    closeModal(includedItemsOverlay);
   }
 
   includedItemsOverlay.addEventListener("click", (e) => {
     if (e.target === includedItemsOverlay) {
-      includedItemsOverlay.classList.remove("show");
+        closeModal(includedItemsOverlay);
     }
   });
 
@@ -956,17 +739,17 @@ const SubModalOverlay = document.getElementById('MonthlySubOverlay');
 const openSubModalBtn = document.getElementById('openSubModal');
 
 openSubModalBtn.addEventListener("click", () => {
-  SubModalOverlay.classList.add("show");
+  openModal(SubModalOverlay);
 });
 
 function closeSubModal() {
-  SubModalOverlay.classList.remove("show");
+  closeModal(SubModalOverlay);
 }
 
 SubModalOverlay.addEventListener("click", (e) => {
   if (e.target === SubModalOverlay) {
-    SubModalOverlay.classList.remove("show");
-  }
+        closeModal(SubModalOverlay);
+    }
 });
 
 // 세나패스 설명
@@ -974,17 +757,17 @@ const SenaPassModalOverlay = document.getElementById('SenaPassOverlay');
 const openSenaPassModalBtn = document.getElementById('openSenaPassModal');
 
 openSenaPassModalBtn.addEventListener("click", () => {
-  SenaPassModalOverlay.classList.add("show");
+  openModal(SenaPassModalOverlay);
 });
 
 function closeSenaPassModal() {
-  SenaPassModalOverlay.classList.remove("show");
+  closeModal(SenaPassModalOverlay);
 }
 
 SenaPassModalOverlay.addEventListener("click", (e) => {
   if (e.target === SenaPassModalOverlay) {
-    SenaPassModalOverlay.classList.remove("show");
-  }
+        closeModal(SenaPassModalOverlay);
+    }
 });
 
 // 매일 사용 루비 설명
@@ -992,17 +775,17 @@ const rubyToUseModalOverlay = document.getElementById('rubyToUseOverlay');
 const openrubyToUseModalBtn = document.getElementById('openRubyToUseModal');
 
 openrubyToUseModalBtn.addEventListener("click", () => {
-  rubyToUseModalOverlay.classList.add("show");
+  openModal(rubyToUseModalOverlay);
 });
 
 function closeRubyToUseModal() {
-  rubyToUseModalOverlay.classList.remove("show");
+  closeModal(rubyToUseModalOverlay);
 }
 
 rubyToUseModalOverlay.addEventListener("click", (e) => {
   if (e.target === rubyToUseModalOverlay) {
-    rubyToUseModalOverlay.classList.remove("show");
-  }
+        closeModal(rubyToUseModalOverlay);
+    }
 });
 
 // 시련의 탑 메달 설명
@@ -1010,17 +793,17 @@ const medalModalOverlay = document.getElementById('medalOverlay');
 const openMedalModalBtn = document.getElementById('openMedalModal');
 
 openMedalModalBtn.addEventListener("click", () => {
-  medalModalOverlay.classList.add("show");
+  openModal(medalModalOverlay);
 });
 
 function closeMedalModal() {
-  medalModalOverlay.classList.remove("show");
+  closeModal(medalModalOverlay);
 }
 
 medalModalOverlay.addEventListener("click", (e) => {
   if (e.target === medalModalOverlay) {
-    medalModalOverlay.classList.remove("show");
-  }
+        closeModal(medalModalOverlay);
+    }
 });
 
 // 페이지에 있는 모든 설명창(.assumption-box)을 선택합니다.
@@ -1141,6 +924,7 @@ raidTooltip.addEventListener('click', function() {
   // 클릭된 툴팁(this)에서 'visible' 클래스를 제거하여 숨깁니다.
   this.classList.remove('visible');
 });
+
 </script>
 </body>
 </html>
