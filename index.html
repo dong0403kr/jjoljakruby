@@ -138,7 +138,7 @@
         .mobile-break { display: inline; }
         .mobile-br { display: none; }
 
-        .credit::after { content: '최종 수정일 2025.09.15'; }
+        .credit::after { content: '최종 수정일 2025.09.17'; }
 
         /* [수정] 최대/90/120 버튼 스타일 */
         .max-btn, .btn90, .btn120 {
@@ -232,7 +232,7 @@
             button { width: 100%; }
             .max-btn, .btn90, .btn120, .assumption-button { width: auto; }
             
-            .credit::after { content: '모바일은 터치로 팝업을 끌 수 있음 | 최종 수정일 2025.09.15'; }
+            .credit::after { content: '모바일은 터치로 팝업을 끌 수 있음 | 최종 수정일 2025.09.17'; }
             .close-btn { padding: 15px; top: 0; right: 0; }
             .modal-scroll-content { max-height: 85vh; overflow-y: auto; }
             body.modal-open { overflow: hidden; }
@@ -267,6 +267,7 @@
         <li>일일 의뢰, 세나패스 등 일일 퀘스트는 모두 진행</li>
         <li>길드 출석 보상 열쇠 60개</li>
         <li>상점 무료상품 모두 구매</li>
+        <li>공성전 50만점 이상 매일 참여(열쇠 20개)</li>
       </ul>
       <h3>📌 유의사항</h3>
       <ul>
@@ -291,6 +292,7 @@
       <li>300일 출석표(10일) : 240개. 1일에 24개로 계산</li>
       <li>주말 푸시보상(1주) : 200개</li>
       <li>상점 무료 열쇠상자(1일) : 60개</li>
+      <li>공성전 보상 열쇠(1일) : 20개</li>
     </ul>
     <h3>♦️ 계산에 기본 포함된 루비</h3>
     <ul>
@@ -604,6 +606,7 @@ function calculateProfit() {
   const keysFrom7Shop = (honorCount + guildCount) * 60 * weeks; // 명예 & 길드 상점 : 7일 초기화 상점
   const keysFrom28Shop = (arenaCount + guildWarCount) * (period === 2 ? 30 : 60) // 결투장 & 길드전 상점 : 28일 초기화 상점
   const keysFromWeekend = 200 * weeks; // 주말 푸시 열쇠 (토,일 100개씩)
+  const keysFromSiege = 20 * days;
   const keysFromKeyBox = ((1 + 
     (keyBoxRuby >= 50 ? 20 : 0) +
     (keyBoxRuby >= 80 ? 50 : 0) +
@@ -611,7 +614,7 @@ function calculateProfit() {
     (keyBoxRuby >= 120 ? 50 : 0) - (50-keyBoxCount)) * 60) * days;
 
   const totalKeysBeforeRaid = totalNaturalKeys + keySubKeys + keysFromSenaPass +
-    keysFromDailySources + keysFrom300Attendance + keysFrom7Shop + keysFrom28Shop + keysFromWeekend + keysFromKeyBox;
+    keysFromDailySources + keysFrom300Attendance + keysFrom7Shop + keysFrom28Shop + keysFromWeekend + keysFromSiege + keysFromKeyBox;
 
   // 🔹 레이드 차감
   const raidKeysUsed = raid11Lev ? (raidCountPerDay * 12 * days) : (raidCountPerDay * 6 * days) ; // 레이드에 사용되는 열쇠 수. 11단계 이상일 경우 판당 12개 차감
