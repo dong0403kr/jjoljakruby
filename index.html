@@ -116,6 +116,9 @@
             max-width: 120px; min-width: 80px; width: auto;
             flex-shrink: 0; margin-top: 0;
         }
+        #pickup-simulator {
+          background-color: #485fb1;
+        }
         .assumption-button:active { background-color: #e06040; }
         @media (hover: hover) { .assumption-button:hover { background-color: #e06040; } }
         
@@ -123,7 +126,7 @@
 
         .checkbox-label { cursor: pointer; }
         #raidOver11Level { margin-left: 15px; }
-        .button-column { display: flex; flex-direction: column; gap: 10px; margin-top: 0; align-items: flex-start; }
+        .button-column { display: flex; flex-direction: column; gap: 10px; margin-top: 0; margin-right: 20px; align-items: flex-start; }
         #keyBoxCount_container { display: none; margin-left: 10px; }
         #premiumOption { display: none; }
         
@@ -175,7 +178,7 @@
         
         #profit2w, #profit4w, #avgProfit, #heroCount, #avgHeroCount, #accessoryDays { color: #f1c40f; }
 
-        #arenaKeyCount, #honorKeyCount, #guildKeyCount {
+        #arenaKeyCount, #honorKeyCount, #guildKeyCount, #guildWarKeyCount {
             flex: none; /* 남는 공간을 차지하지 않도록 설정 */
             width: 100px;
             margin-left: 0;
@@ -210,15 +213,17 @@
         #maintitle {
           margin-left : 20px;
         }
+        .highlight-days {
+          color: #b7f348; /* 강조하고 싶은 색상 (예: 노란색) */
+        }
         @media (max-width: 480px) {
             body { max-width: 100%; border-radius: 0; }
             .title-wrapper {
               padding: 8px 25px;
               line-height: 40px;
-              letter-spacing: 0.25em;
+              letter-spacing: 0.1em;
             }
             .mobile-break { display: none; }
-            .mobile-br { display: inline; }
             
             label { flex-direction: row; align-items: center; }
             input[type="number"], select { margin-left: 10px; width: auto; flex: 1; }
@@ -231,7 +236,12 @@
             .close-btn { padding: 15px; top: 0; right: 0; }
             .modal-scroll-content { max-height: 85vh; overflow-y: auto; }
             body.modal-open { overflow: hidden; }
-            #maintitle { margin-left: 40px;}
+            #maintitle { margin-left: 20px;}
+            .button-column {margin-right: 0px;}
+        }
+
+        @media (max-width: 440px) {
+            .mobile-br { display: inline; }
         }
   </style>
 </head>
@@ -242,6 +252,7 @@
     <div class="button-column">
       <button id="showAssumption" class="assumption-button">전제조건</button>
       <button id="showIncludedItems" class="assumption-button">계산 포함 항목</button>
+      <button id="pickup-simulator" class="assumption-button">픽뽑 시뮬레이터</button>
     </div>
   </div>
 
@@ -360,23 +371,33 @@
   </div>
 
   <div class="section">
-    <h3>일주일 동안 상점에서 구매할 열쇠 개수</h3>
-    <label for="arenaKeyCount">
-      ⚔️결투장상점 구매 횟수:
-      <button class="max-btn" data-target="arenaKeyCount">최대</button>
-      <input type="number" id="arenaKeyCount" min="0" max="7" placeholder="미 입력 시 0">
-    </label>
+    <h3><span class="highlight-days">7일</span> 동안 상점에서 구매할 열쇠 개수</h3>
 
     <label for="honorKeyCount">
-      🏵️명예상점 구매 횟수:
+      🎖️명예 상점 구매 횟수:
       <button class="max-btn" data-target="honorKeyCount">최대</button>
       <input type="number" id="honorKeyCount" min="0" max="7" placeholder="미 입력 시 0">
     </label>
 
     <label for="guildKeyCount">
-      🏅길드상점 구매 횟수:
+      🏰길드 상점 구매 횟수:
       <button class="max-btn" data-target="guildKeyCount">최대</button>
       <input type="number" id="guildKeyCount" min="0" max="7" placeholder="미 입력 시 0">
+    </label>
+  </div>
+
+  <div class="section">
+    <h3><span class="highlight-days">28일</span> 동안 상점에서 구매할 열쇠 개수</h3>
+    <label for="arenaKeyCount">
+      ⚔️결투장 상점 구매 횟수:
+      <button class="max-btn" data-target="arenaKeyCount" disabled>최대</button>
+      <input type="number" id="arenaKeyCount" min="0" max="7" placeholder="업데이트 예정" disabled>
+    </label>
+
+    <label for="guildWarKeyCount">
+      🛡️길드전 상점 구매 횟수:
+      <button class="max-btn" data-target="guildWarKeyCount">최대</button>
+      <input type="number" id="guildWarKeyCount" min="0" max="10" placeholder="미 입력 시 0">
     </label>
   </div>
 
@@ -502,6 +523,7 @@
   document.getElementById("honorKeyCount").value = "";
   document.getElementById("guildKeyCount").value = "";
   document.getElementById("arenaKeyCount").value = "";
+  document.getElementById("guildWarKeyCount").value = "";
   document.getElementById("raidCount").value = "";
   document.getElementById("keyBoxCount").value = "";
   document.getElementById("rubyToUse").value = "";
@@ -526,6 +548,7 @@ function calculateProfit() {
   const honorCount = parseInt(document.getElementById("honorKeyCount").value) || 0;
   const guildCount = parseInt(document.getElementById("guildKeyCount").value) || 0;
   const arenaCount = parseInt(document.getElementById("arenaKeyCount").value) || 0;
+  const guildWarCount = parseInt(document.getElementById("guildWarKeyCount").value) || 0;
   const keyBoxRuby = parseInt(document.getElementById("keyBoxRuby").value) || 0;
   const parsedBoxCount = parseInt(document.getElementById("keyBoxCount").value);
   const keyBoxCount = isNaN(parsedBoxCount) ? 50 : parsedBoxCount;
@@ -578,7 +601,8 @@ function calculateProfit() {
   const keysFromSenaPass = senaPass ? (senaPassPremium ? (period === 2 ? 540 : 1080) : (period === 2 ? 240 : 480)) : 0; // 구매 후 2주안에 끝내는걸 반영할 경우 senaPass ? (senaPassPremium ? 1080 : 480) : 0;
   const keysFromDailySources = (60 + 60) * days; // 일일의뢰 + 길드출석
   const keysFrom300Attendance = 24 * days; // 300일 출석표 열쇠. 10일에 240개 이므로 하루에 24개로 계산
-  const keysFromShop = (honorCount + guildCount + arenaCount) * 60 * weeks; // 명예 & 길드 상점
+  const keysFrom7Shop = (honorCount + guildCount) * 60 * weeks; // 명예 & 길드 상점 : 7일 초기화 상점
+  const keysFrom28Shop = (arenaCount + guildWarCount) * (period === 2 ? 30 : 60) // 결투장 & 길드전 상점 : 28일 초기화 상점
   const keysFromWeekend = 200 * weeks; // 주말 푸시 열쇠 (토,일 100개씩)
   const keysFromKeyBox = ((1 + 
     (keyBoxRuby >= 50 ? 20 : 0) +
@@ -587,7 +611,7 @@ function calculateProfit() {
     (keyBoxRuby >= 120 ? 50 : 0) - (50-keyBoxCount)) * 60) * days;
 
   const totalKeysBeforeRaid = totalNaturalKeys + keySubKeys + keysFromSenaPass +
-    keysFromDailySources + keysFrom300Attendance + keysFromShop + keysFromWeekend + keysFromKeyBox;
+    keysFromDailySources + keysFrom300Attendance + keysFrom7Shop + keysFrom28Shop + keysFromWeekend + keysFromKeyBox;
 
   // 🔹 레이드 차감
   const raidKeysUsed = raid11Lev ? (raidCountPerDay * 12 * days) : (raidCountPerDay * 6 * days) ; // 레이드에 사용되는 열쇠 수. 11단계 이상일 경우 판당 12개 차감
@@ -650,7 +674,6 @@ function calculateProfit() {
   console.log("세나패스 열쇠:", keysFromSenaPass);
   console.log("일일의뢰 & 길드출석:", keysFromDailySources);
   console.log("300일 출석표 열쇠:", keysFrom300Attendance);
-  console.log("상점 열쇠:", keysFromShop);
   console.log("쫄작 열쇠:", keysForCholjak);
 console.log("쫄작 횟수:", runs);
 console.log("2주 동안 사용되는 쫄:", heroCount);
@@ -852,6 +875,7 @@ function enforceMaxValue(id, max) {
 enforceMaxValue("honorKeyCount", 7);
 enforceMaxValue("guildKeyCount", 7);
 enforceMaxValue("arenaKeyCount", 7);
+enforceMaxValue("guildWarKeyCount", 10);
 enforceMaxValue("keyBoxCount", 50);
 enforceMaxValue("medalCount", 120);
 
@@ -928,6 +952,14 @@ raidTooltip.addEventListener('click', function() {
   // 클릭된 툴팁(this)에서 'visible' 클래스를 제거하여 숨깁니다.
   this.classList.remove('visible');
 });
+
+const goToSimulatorBtn = document.getElementById('pickup-simulator');
+if (goToSimulatorBtn) {
+    goToSimulatorBtn.addEventListener('click', function() {
+        // 새 탭에서 시뮬레이터 페이지 열기
+        window.open('https://pickup-simulator.netlify.app/', '_blank');
+    });
+}
 
 </script>
 </body>
