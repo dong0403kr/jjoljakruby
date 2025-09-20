@@ -130,15 +130,15 @@
         #keyBoxCount_container { display: none; margin-left: 10px; }
         #premiumOption { display: none; }
         
-        #openSubModal, #openSenaPassModal, #openRubyToUseModal, #openMedalModal {
+        .modal-trigger {
             cursor: pointer; color: #7289da; transition: color 0.15s ease-in-out;
         }
-        #openSubModal:hover, #openSenaPassModal:hover, #openRubyToUseModal:hover, #openMedalModal:hover { color:#e06040 }
+        .modal-trigger:hover { color:#e06040 }
         
         .mobile-break { display: inline; }
         .mobile-br { display: none; }
 
-        .credit::after { content: '최종 수정일 2025.09.17'; }
+        .credit::after { content: '최종 수정일 2025.09.20'; }
 
         /* [수정] 최대/90/120 버튼 스타일 */
         .max-btn, .btn90, .btn120 {
@@ -173,7 +173,7 @@
         h3 { margin-top: 15px; margin-bottom: 15px; }
         h4 { margin-top: 15px; margin-bottom: 15px; }
 
-        .rubyuseTitle, .raidTitle { margin-right: 5px; }
+        .raidTitle { margin-right: 5px; }
         li { line-height: 24px; }
         
         #profit2w, #profit4w, #avgProfit, #heroCount, #avgHeroCount, #accessoryDays { color: #f1c40f; }
@@ -194,7 +194,7 @@
         }
 
         #rubyToUse {
-          margin-left:0;
+          margin-left: 5px;
         }
 
         #calculateBtn, #resetbutton {
@@ -223,6 +223,10 @@
               line-height: 40px;
               letter-spacing: 0.1em;
             }
+            #openRubyToUseModal {
+              line-height: 22px;
+            }
+            
             .mobile-break { display: none; }
             
             label { flex-direction: row; align-items: center; }
@@ -232,7 +236,7 @@
             button { width: 100%; }
             .max-btn, .btn90, .btn120, .assumption-button { width: auto; }
             
-            .credit::after { content: '모바일은 터치로 팝업을 끌 수 있음 | 최종 수정일 2025.09.17'; }
+            .credit::after { content: '모바일은 터치로 팝업을 끌 수 있음 | 최종 수정일 2025.09.20'; }
             .close-btn { padding: 15px; top: 0; right: 0; }
             .modal-scroll-content { max-height: 85vh; overflow-y: auto; }
             body.modal-open { overflow: hidden; }
@@ -273,10 +277,11 @@
       <ul>
         <li>각 카테고리(굵은 글씨)를 클릭하면 관련 설명을 볼 수 있음</li>
         <li>세나패스, 월정액 구매 보너스 등 단기간에 벌어들이는 재화까지 계산에 반영했기 때문에 일평균 순이익은 참고용으로만 보는 것을 추천</li>
+        <li>일일상점 1500원은 7일 연속으로 구매했을 경우만 계산<br>(중간에 하루 쉬기 x)</li>
         <li>쫄작원정대 열쇠는 쫄작원정대Ⅱ 마지막 사이클 기준</li>
         <li>총력전 루비 보상은 2주에 한번씩 받는 걸로 계산</li>
         <li>잡화상점, 총력전 라운드 출석, 이벤트 보상 등의 불규칙 변수는 계산에 포함하지 않았으므로 계산 전제조건을 만족한다면 실제 모을 수 있는 루비는 계산결과 보다 많음</li>
-        <li>모든 계산 결과는 대략적인 수치로 100% 정확하지 않음 (± 80루비 범위 오차)</li>
+        <li>모든 계산 결과는 대략적인 수치로 100% 정확하지 않음<br>(± 80루비 범위 오차)</li>
         </div>
       </ul><div class="credit"></div>
     </div>
@@ -293,6 +298,7 @@
       <li>주말 푸시보상(1주) : 200개</li>
       <li>상점 무료 열쇠상자(1일) : 60개</li>
       <li>공성전 보상 열쇠(1일) : 20개</li>
+      <li>정기점검 보상 열쇠(2주) : 100개</li>
     </ul>
     <h3>♦️ 계산에 기본 포함된 루비</h3>
     <ul>
@@ -305,7 +311,7 @@
 </div>
 
   <div class="section" style="display: flex; gap: 20px;">
-    <h3 id="openSubModal">월정액 여부</h3>
+    <h3 id="openSubModal" class="modal-trigger">월정액 여부</h3>
     <div class="checkbox-row">
         <label class="checkbox-label"><input type="checkbox" id="rubySubscription" > 루비 월정액</label>
         <label class="checkbox-label"><input type="checkbox" id="keySubscription" > 열쇠 월정액</label>
@@ -332,7 +338,7 @@
   </div>
 
   <div class="section" style="display: flex; gap: 20px; align-items: center;">
-    <h3 id="openSenaPassModal">세나패스</h3>
+    <h3 id="openSenaPassModal" class="modal-trigger">세나패스</h3>
     <label class="checkbox-label"><input type="checkbox" id="senaPass" > 세나패스 포함</label>
     <span id="premiumOption">
       <label class="checkbox-label"><input type="checkbox" id="senaPass_premium" > 프리미엄 구매</label>
@@ -370,6 +376,36 @@
             <input type="number" id="keyBoxCount" min="0" max="50" placeholder="기본:50">
     </span>
     </label>
+  </div>
+
+  <div class="section" style="display: flex; gap: 15px;">
+    <h3 id="openDaily1500x7Modal" class="modal-trigger">일일 상점 1500원 × 7일</h3>
+    <label for="daily1500x7">
+      <select id="daily1500x7">
+        <option value="0">구매 안함</option>
+        <option value="1">1사이클 / 4주</option>
+        <option value="2">2사이클 / 4주</option>
+        <option value="3">3사이클 / 4주</option>
+        <option value="4">4사이클 / 4주</option>
+      </select>
+    </label>
+  </div>
+
+  <div id="daily1500x7Overlay" class="overlay">
+    <div class="assumption-box">
+      <span class="close-btn" onclick="closedaily1500x7Modal()">&times;</span>
+      <h3>1500원 × 7일 동안 얻는 열쇠,루비</h3>
+      <ul>
+        <li>열쇠 : 상자 * 12 = 720개</li>
+        <li>루비 : 하루에 50개 = 350개</li>
+      </ul>
+      <h3>계산 유의사항</h3>
+      <ul>
+        <li>1사이클 = 하루도 쉬지않고 7일 연속으로 구매
+        <br>예) 3사이클/4주 → 4주 동안 3사이클(21일) 구매 </li>
+      </ul>
+      </ul><div class="credit"></div>
+    </div>
   </div>
 
   <div class="section">
@@ -428,7 +464,7 @@
   </div>
 
   <div class="section" style="display: flex; gap: 10px;">
-    <h3 id="openMedalModal">시련의 탑 메달</h3>
+    <h3 id="openMedalModal" class="modal-trigger">시련의 탑 메달</h3>
     <label for="medalCount">
       <button class="btn90" data-target="medalCount">90개</button>
       <button class="btn120" data-target="medalCount">120개</button>
@@ -462,7 +498,7 @@
 </div>
 
 <div class="section" style="display: flex; gap: 10px;">
-  <h3 id="openRubyToUseModal" class="rubyuseTitle">매일 일정하게 <span class="mobile-br"><br></span>사용할 루비</h3>
+  <h3 id="openRubyToUseModal"  class="modal-trigger">매일 일정하게 <span class="mobile-br"><br></span>사용할 루비</h3>
   <label for="rubyToUse">
       <input type="number" id="rubyToUse" min="0" placeholder="미 입력 시 0">
     </label>
@@ -475,7 +511,7 @@
       <ul>
         <li>누적 2회 : 50루비</li>
         <li>누적 3회 : 150루비</li>
-        <li>4회차 이상 : + 150루비씩</li>
+        <li>4회차 이상 : +150루비씩</li>
       </ul>
       <h3>🎫 성장던전 티켓 구매비용</h3>
       <ul>
@@ -483,7 +519,7 @@
         <li>2장 : 250루비</li>
         <li>3장 : 450루비</li>
         <li>4장 : 750루비</li>
-        <li>5장 이상 : + 500루비씩</li>
+        <li>5장 이상 : +500루비씩</li>
       </ul>
       </ul><div class="credit"></div>
     </div>
@@ -519,8 +555,9 @@
 
   // 셀렉트 초기화
   document.getElementById("keyBoxRuby").value = "0";
+  document.getElementById("daily1500x7").value = "0";
   document.getElementById("conquestTier").value = "none";
-
+  
   // 숫자 입력 초기화
   document.getElementById("honorKeyCount").value = "";
   document.getElementById("guildKeyCount").value = "";
@@ -546,12 +583,13 @@ function calculateProfit() {
   const keySub = document.getElementById("keySubscription").checked;
   const senaPass = document.getElementById("senaPass").checked;
   const senaPassPremium = document.getElementById("senaPass_premium").checked;
+  const keyBoxRuby = parseInt(document.getElementById("keyBoxRuby").value) || 0;
+  const daily1500x7 = parseInt(document.getElementById("daily1500x7").value) || 0;
   const raid11Lev = document.getElementById("raidOver11Level").checked;
   const honorCount = parseInt(document.getElementById("honorKeyCount").value) || 0;
   const guildCount = parseInt(document.getElementById("guildKeyCount").value) || 0;
   const arenaCount = parseInt(document.getElementById("arenaKeyCount").value) || 0;
   const guildWarCount = parseInt(document.getElementById("guildWarKeyCount").value) || 0;
-  const keyBoxRuby = parseInt(document.getElementById("keyBoxRuby").value) || 0;
   const parsedBoxCount = parseInt(document.getElementById("keyBoxCount").value);
   const keyBoxCount = isNaN(parsedBoxCount) ? 50 : parsedBoxCount;
   const raidCountPerDay = parseInt(document.getElementById("raidCount").value) || 0;
@@ -606,7 +644,9 @@ function calculateProfit() {
   const keysFrom7Shop = (honorCount + guildCount) * 60 * weeks; // 명예 & 길드 상점 : 7일 초기화 상점
   const keysFrom28Shop = (arenaCount + guildWarCount) * (period === 2 ? 30 : 60) // 결투장 & 길드전 상점 : 28일 초기화 상점
   const keysFromWeekend = 200 * weeks; // 주말 푸시 열쇠 (토,일 100개씩)
-  const keysFromSiege = 20 * days;
+  const keysFromSiege = 20 * days; // 공성전 50만점 보상
+  const keysFromUpdate = (period === 2 ? 100 : 200); // 정기 업데이트 보상 열쇠
+  const keysFromdaily1500x7 = daily1500x7 > 2 ? (period === 2 ? 720*2 : 720*daily1500x7) : 720*daily1500x7; // 일일상점 1500원 * 7일 열쇠
   const keysFromKeyBox = ((1 + 
     (keyBoxRuby >= 50 ? 20 : 0) +
     (keyBoxRuby >= 80 ? 50 : 0) +
@@ -614,7 +654,7 @@ function calculateProfit() {
     (keyBoxRuby >= 120 ? 50 : 0) - (50-keyBoxCount)) * 60) * days;
 
   const totalKeysBeforeRaid = totalNaturalKeys + keySubKeys + keysFromSenaPass +
-    keysFromDailySources + keysFrom300Attendance + keysFrom7Shop + keysFrom28Shop + keysFromWeekend + keysFromSiege + keysFromKeyBox;
+    keysFromDailySources + keysFrom300Attendance + keysFrom7Shop + keysFrom28Shop + keysFromWeekend + keysFromSiege + keysFromUpdate + keysFromdaily1500x7 + keysFromKeyBox;
 
   // 🔹 레이드 차감
   const raidKeysUsed = raid11Lev ? (raidCountPerDay * 12 * days) : (raidCountPerDay * 6 * days) ; // 레이드에 사용되는 열쇠 수. 11단계 이상일 경우 판당 12개 차감
@@ -659,11 +699,12 @@ function calculateProfit() {
   const rubyFrom300Attendance = 20 * days; // 300일 출석표 루비. 10일에 200개 이므로 하루에 20개로 계산
   const rubyFromFreeShop = 30 * days;
   const rubyFromWeekend = 100 * weeks;
+  const rubyFromdaily1500x7 = daily1500x7 > 2 ? (period === 2 ? 350*2 : 350*daily1500x7) : 350*daily1500x7; // 일일상점 1500원 * 7일 루비
   const rubyFromConquest = getConquestRuby(conquestTier, weeks);
   const rubyFromTrial = (period === 2 ? (towerOfTrialRuby(medalCount) / 2) : towerOfTrialRuby(medalCount));
 
   const totalRubyIncome = rubyFromCholjak + rubyFromRubySub + rubyFromKeySubBonus +
-    rubyFromSenaPass + rubyFromDailyQuest + rubyFrom300Attendance + rubyFromFreeShop + rubyFromWeekend + rubyFromConquest + rubyFromTrial;
+    rubyFromSenaPass + rubyFromDailyQuest + rubyFrom300Attendance + rubyFromFreeShop + rubyFromWeekend + rubyFromdaily1500x7 + rubyFromConquest + rubyFromTrial;
 
   // 🔹 루비 지출
   const rubySpentPerDay = getKeyBoxRubyCostPerDay(keyBoxRuby,keyBoxCount);
@@ -764,7 +805,7 @@ const includedItemsOverlay = document.getElementById("includedItemsOverlay");
     }
   });
 
-  // 월정액 설명
+// 월정액 설명
 const SubModalOverlay = document.getElementById('MonthlySubOverlay');
 const openSubModalBtn = document.getElementById('openSubModal');
 
@@ -833,6 +874,24 @@ function closeMedalModal() {
 medalModalOverlay.addEventListener("click", (e) => {
   if (e.target === medalModalOverlay) {
         closeModal(medalModalOverlay);
+    }
+});
+
+// 1500원 x 7일 설명
+const daily1500x7ModalOverlay = document.getElementById('daily1500x7Overlay');
+const openDaily1500x7ModalBtn = document.getElementById('openDaily1500x7Modal');
+
+openDaily1500x7ModalBtn .addEventListener("click", () => {
+  openModal(daily1500x7ModalOverlay);
+});
+
+function closedaily1500x7Modal() {
+  closeModal(daily1500x7ModalOverlay);
+}
+
+daily1500x7ModalOverlay.addEventListener("click", (e) => {
+  if (e.target === daily1500x7ModalOverlay) {
+        closeModal(daily1500x7ModalOverlay);
     }
 });
 
@@ -967,4 +1026,3 @@ if (goToSimulatorBtn) {
 </script>
 </body>
 </html>
-
