@@ -138,7 +138,7 @@
         .mobile-break { display: inline; }
         .mobile-br { display: none; }
 
-        .credit::after { content: '최종 수정일 2025.09.20'; }
+        .credit::after { content: 'Last updated 2025.09.22'; }
 
         /* [수정] 최대/90/120 버튼 스타일 */
         .max-btn, .btn90, .btn120 {
@@ -236,7 +236,7 @@
             button { width: 100%; }
             .max-btn, .btn90, .btn120, .assumption-button { width: auto; }
             
-            .credit::after { content: '모바일은 터치로 팝업을 끌 수 있음 | 최종 수정일 2025.09.20'; }
+            .credit::after { content: '터치 시 팝업 꺼짐. Last updated 2025.09.22'; }
             .close-btn { padding: 15px; top: 0; right: 0; }
             .modal-scroll-content { max-height: 85vh; overflow-y: auto; }
             body.modal-open { overflow: hidden; }
@@ -299,12 +299,14 @@
       <li>상점 무료 열쇠상자(1일) : 60개</li>
       <li>공성전 보상 열쇠(1일) : 20개</li>
       <li>정기점검 보상 열쇠(2주) : 100개</li>
+      <li>릴레이 무료 상품(2주) : 30개</li>
     </ul>
     <h3>♦️ 계산에 기본 포함된 루비</h3>
     <ul>
       <li>일일의뢰 + 상점 무료루비(1일) : 130개</li>
       <li>300일 출석표(10일) : 200개. 1일에 20개로 계산</li>
       <li>주말 부스트 보상(1주) : 100개</li>
+      <li>릴레이 무료 상품(2주) : 50개</li>
     </ul>
     <div class="credit"></div>
   </div>
@@ -647,6 +649,7 @@ function calculateProfit() {
   const keysFromSiege = 20 * days; // 공성전 50만점 보상
   const keysFromUpdate = (period === 2 ? 100 : 200); // 정기 업데이트 보상 열쇠
   const keysFromdaily1500x7 = daily1500x7 > 2 ? (period === 2 ? 720*2 : 720*daily1500x7) : 720*daily1500x7; // 일일상점 1500원 * 7일 열쇠
+  const keysFromRelay = (period === 2 ? 30 : 60); // 릴레이 무료 상품 열쇠 
   const keysFromKeyBox = ((1 + 
     (keyBoxRuby >= 50 ? 20 : 0) +
     (keyBoxRuby >= 80 ? 50 : 0) +
@@ -654,7 +657,7 @@ function calculateProfit() {
     (keyBoxRuby >= 120 ? 50 : 0) - (50-keyBoxCount)) * 60) * days;
 
   const totalKeysBeforeRaid = totalNaturalKeys + keySubKeys + keysFromSenaPass +
-    keysFromDailySources + keysFrom300Attendance + keysFrom7Shop + keysFrom28Shop + keysFromWeekend + keysFromSiege + keysFromUpdate + keysFromdaily1500x7 + keysFromKeyBox;
+    keysFromDailySources + keysFrom300Attendance + keysFrom7Shop + keysFrom28Shop + keysFromWeekend + keysFromSiege + keysFromUpdate + keysFromdaily1500x7 + keysFromRelay + keysFromKeyBox;
 
   // 🔹 레이드 차감
   const raidKeysUsed = raid11Lev ? (raidCountPerDay * 12 * days) : (raidCountPerDay * 6 * days) ; // 레이드에 사용되는 열쇠 수. 11단계 이상일 경우 판당 12개 차감
@@ -700,11 +703,12 @@ function calculateProfit() {
   const rubyFromFreeShop = 30 * days;
   const rubyFromWeekend = 100 * weeks;
   const rubyFromdaily1500x7 = daily1500x7 > 2 ? (period === 2 ? 350*2 : 350*daily1500x7) : 350*daily1500x7; // 일일상점 1500원 * 7일 루비
+  const rubyFromRelay = (period === 2 ? 50 : 100); // 릴레이 무료 상품 열쇠
   const rubyFromConquest = getConquestRuby(conquestTier, weeks);
   const rubyFromTrial = (period === 2 ? (towerOfTrialRuby(medalCount) / 2) : towerOfTrialRuby(medalCount));
 
   const totalRubyIncome = rubyFromCholjak + rubyFromRubySub + rubyFromKeySubBonus +
-    rubyFromSenaPass + rubyFromDailyQuest + rubyFrom300Attendance + rubyFromFreeShop + rubyFromWeekend + rubyFromdaily1500x7 + rubyFromConquest + rubyFromTrial;
+    rubyFromSenaPass + rubyFromDailyQuest + rubyFrom300Attendance + rubyFromFreeShop + rubyFromWeekend + rubyFromdaily1500x7 + rubyFromRelay + rubyFromConquest + rubyFromTrial;
 
   // 🔹 루비 지출
   const rubySpentPerDay = getKeyBoxRubyCostPerDay(keyBoxRuby,keyBoxCount);
