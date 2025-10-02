@@ -138,7 +138,7 @@
         .mobile-break { display: inline; }
         .mobile-br { display: none; }
 
-        .credit::after { content: 'Last updated 2025.09.22'; }
+        .credit::after { content: 'Last updated 2025.10.2'; }
 
         /* [수정] 최대/90/120 버튼 스타일 */
         .max-btn, .btn90, .btn120 {
@@ -236,7 +236,7 @@
             button { width: 100%; }
             .max-btn, .btn90, .btn120, .assumption-button { width: auto; }
             
-            .credit::after { content: '터치 시 팝업 꺼짐. Last updated 2025.09.22'; }
+            .credit::after { content: '터치 시 팝업 꺼짐. Last updated 2025.10.2'; }
             .close-btn { padding: 15px; top: 0; right: 0; }
             .modal-scroll-content { max-height: 85vh; overflow-y: auto; }
             body.modal-open { overflow: hidden; }
@@ -482,13 +482,13 @@
         <li>4주마다 초기화 되기 때문에 2주는 절반으로 반영</li>
         <li>10~19개 : 100루비</li>
         <li>20~29개 : 200루비</li>
-        <li>30~39개 : 300루비</li>
-        <li>40~49개 : 400루비</li>
-        <li>50~69개 : 500루비</li>
-        <li>70~79개 : 600루비</li>
-        <li>80~99개 : 700루비</li>
-        <li>100~109개 : 1000루비</li>
-        <li>110~120개 : 1500루비</li>
+        <li>30~39개 : 400루비</li>
+        <li>40~49개 : 600루비</li>
+        <li>50~69개 : 800루비</li>
+        <li>70~79개 : 1000루비</li>
+        <li>80~99개 : 1200루비</li>
+        <li>100~109개 : 1500루비</li>
+        <li>110~120개 : 2000루비</li>
       </ul>
       </ul><div class="credit"></div>
     </div>
@@ -622,13 +622,13 @@ function calculateProfit() {
   function towerOfTrialRuby(medal) {
     if (medal >= 10 && medal < 20) return 100;
     if (medal >= 20 && medal < 30) return 200;
-    if (medal >= 30 && medal < 40) return 300;
-    if (medal >= 40 && medal < 50) return 400;
-    if (medal >= 50 && medal < 70) return 500;
-    if (medal >= 70 && medal < 80) return 600;
-    if (medal >= 80 && medal < 100) return 700;
-    if (medal >= 100 && medal < 110) return 1000;
-    if (medal >= 110) return 1500;
+    if (medal >= 30 && medal < 40) return 400;
+    if (medal >= 40 && medal < 50) return 600;
+    if (medal >= 50 && medal < 70) return 800;
+    if (medal >= 70 && medal < 80) return 1000;
+    if (medal >= 80 && medal < 100) return 1200;
+    if (medal >= 100 && medal < 110) return 1500;
+    if (medal >= 110) return 2000;
     return 0;
   }
 
