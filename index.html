@@ -131,26 +131,27 @@
         #premiumOption { display: none; }
         
         .modal-trigger {
-            cursor: pointer; color: #7289da; transition: color 0.15s ease-in-out;
+            cursor: pointer; color: #7289da; transition: color 0.10s ease-in-out;
         }
         .modal-trigger:hover { color:#e06040 }
         
         .mobile-break { display: inline; }
         .mobile-br { display: none; }
 
-        .credit::after { content: 'Last updated 2025.10.2'; }
+        .credit::after { content: 'Last updated 2025.10.5'; }
 
         /* [수정] 최대/90/120 버튼 스타일 */
-        .max-btn, .btn90, .btn120 {
+        .max-btn, .guildKey7, .btn90, .btn120 {
             background-color: #36393f; border: 1px solid #99aab5; margin-top: 0;
             margin-left: 10px; padding: 6px 8px; color: #ffffff;
             transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out;
             touch-action: manipulation;
         }
         .btn90, .btn120 { margin-left: 5px; }
-        .max-btn:active, .btn90:active, .btn120:active { background-color: #99aab5; color: #2c2f33; }
+        #guildkeyMaxbtn { margin-left: 0px; }
+        .max-btn:active, .guildKey7:active, .btn90:active, .btn120:active { background-color: #99aab5; color: #2c2f33; }
         @media (hover: hover) {
-            .max-btn:hover, .btn90:hover, .btn120:hover {
+            .max-btn:hover, .guildKey7:hover, .btn90:hover, .btn120:hover {
                 background-color: #99aab5; color: #2c2f33;
             }
         }
@@ -234,9 +235,9 @@
             #raidCount { width: 75px; }
             #medalCount {width: 75px;}
             button { width: 100%; }
-            .max-btn, .btn90, .btn120, .assumption-button { width: auto; }
+            .max-btn, .guildKey7, .btn90, .btn120, .assumption-button { width: auto; }
             
-            .credit::after { content: '터치 시 팝업 꺼짐. Last updated 2025.10.2'; }
+            .credit::after { content: '터치 시 팝업 꺼짐. Last updated 2025.10.5'; }
             .close-btn { padding: 15px; top: 0; right: 0; }
             .modal-scroll-content { max-height: 85vh; overflow-y: auto; }
             body.modal-open { overflow: hidden; }
@@ -297,6 +298,7 @@
       <li>300일 출석표(10일) : 240개. 1일에 24개로 계산</li>
       <li>주말 푸시보상(1주) : 200개</li>
       <li>상점 무료 열쇠상자(1일) : 60개</li>
+      <li>일일상점 무료 열쇠(1일) : 30개</li>
       <li>공성전 보상 열쇠(1일) : 20개</li>
       <li>정기점검 보상 열쇠(2주) : 100개</li>
       <li>릴레이 무료 상품(2주) : 30개</li>
@@ -421,8 +423,9 @@
 
     <label for="guildKeyCount">
       🏰길드 상점 구매 횟수:
-      <button class="max-btn" data-target="guildKeyCount">최대</button>
-      <input type="number" id="guildKeyCount" min="0" max="7" placeholder="미 입력 시 0">
+      <button class="guildKey7" data-target="guildKeyCount">7개</button>
+      <button class="max-btn" id="guildkeyMaxbtn" data-target="guildKeyCount">최대</button>
+      <input type="number" id="guildKeyCount" min="0" max="12" placeholder="미 입력 시 0">
     </label>
   </div>
 
@@ -648,8 +651,9 @@ function calculateProfit() {
   const keysFromWeekend = 200 * weeks; // 주말 푸시 열쇠 (토,일 100개씩)
   const keysFromSiege = 20 * days; // 공성전 50만점 보상
   const keysFromUpdate = (period === 2 ? 100 : 200); // 정기 업데이트 보상 열쇠
-  const keysFromdaily1500x7 = daily1500x7 > 2 ? (period === 2 ? 720*2 : 720*daily1500x7) : 720*daily1500x7; // 일일상점 1500원 * 7일 열쇠
-  const keysFromRelay = (period === 2 ? 30 : 60); // 릴레이 무료 상품 열쇠 
+  const keysFromDaily1500x7 = daily1500x7 > 2 ? (period === 2 ? 720*2 : 720*daily1500x7) : 720*daily1500x7; // 일일상점 1500원 * 7일 열쇠
+  const keysFromRelay = (period === 2 ? 30 : 60); // 릴레이 무료 상품 열쇠
+  const keysFromDailyFree = 30 * days;
   const keysFromKeyBox = ((1 + 
     (keyBoxRuby >= 50 ? 20 : 0) +
     (keyBoxRuby >= 80 ? 50 : 0) +
@@ -657,7 +661,8 @@ function calculateProfit() {
     (keyBoxRuby >= 120 ? 50 : 0) - (50-keyBoxCount)) * 60) * days;
 
   const totalKeysBeforeRaid = totalNaturalKeys + keySubKeys + keysFromSenaPass +
-    keysFromDailySources + keysFrom300Attendance + keysFrom7Shop + keysFrom28Shop + keysFromWeekend + keysFromSiege + keysFromUpdate + keysFromdaily1500x7 + keysFromRelay + keysFromKeyBox;
+    keysFromDailySources + keysFrom300Attendance + keysFrom7Shop + keysFrom28Shop + keysFromWeekend + keysFromSiege + keysFromUpdate + 
+    keysFromDaily1500x7 + keysFromRelay + keysFromDailyFree + keysFromKeyBox;
 
   // 🔹 레이드 차감
   const raidKeysUsed = raid11Lev ? (raidCountPerDay * 12 * days) : (raidCountPerDay * 6 * days) ; // 레이드에 사용되는 열쇠 수. 11단계 이상일 경우 판당 12개 차감
@@ -939,7 +944,7 @@ function enforceMaxValue(id, max) {
 
 // 적용 대상 input 요소 등록
 enforceMaxValue("honorKeyCount", 7);
-enforceMaxValue("guildKeyCount", 7);
+enforceMaxValue("guildKeyCount", 12);
 enforceMaxValue("arenaKeyCount", 28);
 enforceMaxValue("guildWarKeyCount", 10);
 enforceMaxValue("keyBoxCount", 50);
@@ -990,11 +995,17 @@ senaPassCheckbox.addEventListener('change', function() {
       }
     });
   });
+            const guildKeyCountInput = document.getElementById('guildKeyCount');
+            const guildKey7 = document.querySelector('.guildKey7');
 
-  // 필요한 HTML 요소들을 ID와 클래스 이름으로 선택합니다.
             const medalCountInput = document.getElementById('medalCount');
             const btn90 = document.querySelector('.btn90');
             const btn120 = document.querySelector('.btn120');
+
+            guildKey7.addEventListener('click', (event) => {
+              event.preventDefault();
+              guildKeyCountInput.value = 7;
+            });
 
             // '90개' 버튼에 클릭 이벤트 리스너를 추가합니다.
             btn90.addEventListener('click', (event) => {
