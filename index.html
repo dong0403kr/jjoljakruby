@@ -55,7 +55,7 @@
 
         h1, h3, h4 {
             font-family: 'Gyeonggi_Title_Medium';
-            color: #7289da;
+            color: #97abf3;
         }
 
         h1{
@@ -146,7 +146,7 @@
         #premiumOption { display: none; }
         
         .modal-trigger {
-            cursor: pointer; color: #7289da; transition: color 0.10s ease-in-out;
+            cursor: pointer; color: #97abf3;
         }
         .modal-trigger:hover { color:#e06040 }
         
@@ -196,8 +196,9 @@
 
         #arenaKeyCount, #honorKeyCount, #guildKeyCount, #guildWarKeyCount {
             flex: none; /* 남는 공간을 차지하지 않도록 설정 */
-            width: 100px;
+            width: 85px;
             margin-left: 0;
+            padding-right: 0;
         }
 
         #medalCount {
@@ -382,7 +383,7 @@
     </div>
   </div>
 
-  <div class="section" style="display: flex; gap: 15px;">
+  <div class="section" style="display: flex; gap: 10px;">
     <h3>열쇠상자 구매</h3>
     <label for="keyBoxRuby">
       <select id="keyBoxRuby">
@@ -398,7 +399,7 @@
     </label>
   </div>
 
-  <div class="section" style="display: flex; gap: 15px;">
+  <div class="section" style="display: flex; gap: 10px;">
     <h3 id="openDaily1500x7Modal" class="modal-trigger">일일 상점 1500원 × 7일</h3>
     <label for="daily1500x7">
       <select id="daily1500x7">
@@ -471,7 +472,7 @@
     </div>
   </div>
 
-  <div class="section" id="conquestSection" style="display: flex; gap: 20px;">
+  <div class="section" id="conquestSection" style="display: flex; gap: 10px;">
     <h3>총력전 티어</h3>
     <label for="conquestTier">
       <select id="conquestTier">
@@ -558,8 +559,17 @@
   </div>
 <script>
   const raidTooltip = document.getElementById("raidTooltip");
+  
+  const senaPassCheckbox = document.getElementById('senaPass');
+  const premiumCheckbox = document.getElementById('senaPass_premium');
+  const premiumOptionContainer = document.getElementById('premiumOption');
+
 
   function resetForm() {
+  // 프리미엄 선택지 초기화
+  premiumCheckbox.checked = false;
+  premiumOptionContainer.style.display = 'none';
+
   //툴팁 초기화
   raidTooltip.classList.remove('visible');
 
@@ -983,10 +993,10 @@ selectBox.addEventListener('change', function() {
         keyBoxCount.value = '';
     }});
 
-const senaPassCheckbox = document.getElementById('senaPass');
-const premiumCheckbox = document.getElementById('senaPass_premium');
-const premiumOptionContainer = document.getElementById('premiumOption');
 
+
+    
+// 세나패스 프리미엄 선택지 발생
 senaPassCheckbox.addEventListener('change', function() {
   if(this.checked) {
     premiumOptionContainer.style.display = 'inline-block';
